@@ -16,6 +16,12 @@ PlatformIO WiFi analyzer for the LilyGO T-Display C5.
 
 Passive WiFi scans can see RSSI, channel, band, and security, but they do not reliably expose internet throughput or AP channel width. The display therefore shows channel load as the practical bandwidth-health indicator and marks raw scan bandwidth as `n/a`.
 
+## Feature Notes
+
+- [Bluetooth feature plan](docs/bluetooth-feature.md)
+- [Bluetooth scanner feature plan](docs/bluetooth-scanner.md)
+- [RSSI reference](docs/rssi-reference.md)
+
 ## Build
 
 ```sh
