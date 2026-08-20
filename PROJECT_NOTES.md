@@ -14,7 +14,7 @@
 4. [ ] SSID Grouping
    Group networks with the same SSID, so mesh networks like HHMESH show as one SSID with multiple BSSIDs/APs.
 
-5. [ ] BSSID / MAC Detail Page
+5. [x] BSSID / MAC Detail Page
    Show the AP MAC address, useful for distinguishing mesh nodes or extenders.
 
 6. [ ] Security Audit View

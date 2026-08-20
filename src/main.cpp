@@ -91,6 +91,8 @@ static int networkCount = 0;
 static int selectedNetwork = 0;
 static bool scanning = false;
 static bool buttonsArmed = false;
+static bool macDetailView = false;
+static bool bothButtonsWasPressed = false;
 static bool pmuReady = false;
 static uint32_t lastScanMs = 0;
 static uint32_t lastButtonMs = 0;
@@ -315,7 +317,23 @@ void drawDetails()
   tft.drawString(fitText(displaySsid(network), 21), 8, panelY + 6);
 
   tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawRightString(String(selectedNetwork + 1) + "/" + String(networkCount), tft.width() - 8, panelY + 6);
+  tft.drawRightString(macDetailView ? "MAC" : String(selectedNetwork + 1) + "/" + String(networkCount), tft.width() - 8, panelY + 6);
+
+  if (macDetailView) {
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("BSSID", 8, panelY + 24);
+    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.drawString(network.bssid, 76, panelY + 24);
+
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString("SEC " + String(securityLabel(network.auth)) + "  hidden " + String(network.hidden ? "yes" : "no"), 8, panelY + 42);
+    tft.drawString(String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  load " + String(load), 8, panelY + 60);
+    tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 78);
+    if (pmuReady) {
+      tft.drawRightString(String(batteryVoltage, 2) + "V", tft.width() - 8, panelY + 78);
+    }
+    return;
+  }
 
   tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
   tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 20);
@@ -532,6 +550,22 @@ void handleButtons()
     return;
   }
 
+  const bool prevPressed = buttonPressed(prevButton);
+  const bool nextPressed = buttonPressed(nextButton);
+  if (prevPressed && nextPressed) {
+    if (!bothButtonsWasPressed) {
+      macDetailView = !macDetailView;
+      bothButtonsWasPressed = true;
+      prevButton.wasPressed = true;
+      nextButton.wasPressed = true;
+      lastButtonMs = now;
+      Serial.printf("Detail view: %s\n", macDetailView ? "BSSID/MAC" : "RSSI history");
+      drawAnalyzer();
+    }
+    return;
+  }
+
+  bothButtonsWasPressed = false;
   updateButton(prevButton, 1);
   updateButton(nextButton, -1);
 }
