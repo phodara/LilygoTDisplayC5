@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Header Layout Proposal</title>
+  <desc id="desc">Proposed LilyGO T-Display C5 top header layout showing idle and scanning states.</desc>
+  <defs>
+    <style>
+      .page { fill: #101418; }
+      .panel { fill: #1d232b; stroke: #3b4450; stroke-width: 2; rx: 14; }
+      .screen { fill: #000000; stroke: #5f6b78; stroke-width: 2; }
+      .header { fill: #06145c; }
+      .title { fill: #f4f7fb; font: 700 22px Inter, Arial, sans-serif; }
+      .label { fill: #9da8b6; font: 15px Inter, Arial, sans-serif; }
+      .mono { font: 18px Menlo, Consolas, monospace; }
+      .white { fill: #f4f7fb; }
+      .green { fill: #45d66e; }
+      .cyan { fill: #5ce0ff; }
+      .yellow { fill: #ffe66b; }
+      .guide { stroke: #7d8a99; stroke-width: 1; stroke-dasharray: 4 5; opacity: 0.75; }
+      .zone { fill: rgba(255, 255, 255, 0.08); stroke: #778395; stroke-width: 1; }
+      .note { fill: #c8d0da; font: 14px Inter, Arial, sans-serif; }
+    </style>
+  </defs>
+
+  <rect class="page" width="960" height="360"/>
+  <text class="title" x="480" y="38" text-anchor="middle">Proposed Header Layout</text>
+  <text class="label" x="480" y="62" text-anchor="middle">320 x 28 LCD header, scaled 2x for review</text>
+
+  <g transform="translate(128 94)">
+    <rect class="panel" x="-28" y="-34" width="704" height="102"/>
+    <text class="label" x="0" y="-12">Idle / not scanning</text>
+    <rect class="screen" x="0" y="0" width="640" height="56"/>
+    <rect class="header" x="0" y="0" width="640" height="56"/>
+
+    <rect class="zone" x="16" y="6" width="146" height="44"/>
+    <rect class="zone" x="202" y="6" width="150" height="44"/>
+    <rect class="zone" x="418" y="6" width="206" height="44"/>
+
+    <text class="mono white" x="16" y="36">Wifi</text>
+    <polygon points="214,12 202,28 214,28 208,44 224,24 212,24" fill="#ffe66b"/>
+    <text class="mono green" x="242" y="36">BAT 62%</text>
+    <text class="mono cyan" x="624" y="36" text-anchor="end">18 APs 1/18</text>
+
+    <line class="guide" x1="0" y1="68" x2="0" y2="86"/>
+    <line class="guide" x1="202" y1="68" x2="202" y2="86"/>
+    <line class="guide" x1="624" y1="68" x2="624" y2="86"/>
+    <text class="note" x="0" y="104">x=8 title</text>
+    <text class="note" x="202" y="104">x=101 battery/scan slot</text>
+    <text class="note" x="624" y="104" text-anchor="end">x=312 right-aligned AP count</text>
+  </g>
+
+  <g transform="translate(128 236)">
+    <rect class="panel" x="-28" y="-34" width="704" height="102"/>
+    <text class="label" x="0" y="-12">Scanning</text>
+    <rect class="screen" x="0" y="0" width="640" height="56"/>
+    <rect class="header" x="0" y="0" width="640" height="56"/>
+
+    <rect class="zone" x="16" y="6" width="146" height="44"/>
+    <rect class="zone" x="202" y="6" width="150" height="44"/>
+    <rect class="zone" x="418" y="6" width="206" height="44"/>
+
+    <text class="mono white" x="16" y="36">Wifi</text>
+    <text class="mono yellow" x="202" y="36">Scanning</text>
+    <text class="mono cyan" x="624" y="36" text-anchor="end">18 APs 1/18</text>
+
+    <text class="note" x="0" y="82">Battery lightning bolt and percent are hidden only while scanning.</text>
+    <text class="note" x="624" y="82" text-anchor="end">AP count stays visible on the right.</text>
+  </g>
+</svg>

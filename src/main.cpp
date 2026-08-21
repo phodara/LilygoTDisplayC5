@@ -138,6 +138,8 @@ static bool batteryCharging = false;
 
 void drawAnalyzer();
 void drawCurrentScreen();
+void drawCurrentHeader();
+void drawCurrentBody();
 void startWifiScan();
 void startBleScan();
 
@@ -369,6 +371,9 @@ void updateBattery(bool forceRedraw = false)
     return;
   }
 
+  const int previousPercent = batteryPercent;
+  const bool previousCharging = batteryCharging;
+
   batteryVoltage = pmu.getBatteryVoltage();
   batteryCurrent = pmu.getBatteryCurrent();
   batteryPercent = constrain(static_cast<int>(pmu.getSOC()), 0, 100);
@@ -378,7 +383,9 @@ void updateBattery(bool forceRedraw = false)
     return;
   }
 
-  drawCurrentScreen();
+  if (batteryPercent != previousPercent || batteryCharging != previousCharging) {
+    drawCurrentHeader();
+  }
 }
 
 void drawChargingBolt(int x, int y, uint16_t color, uint16_t bg)
@@ -456,22 +463,23 @@ void drawHeader()
 {
   tft.fillRect(0, 0, tft.width(), 28, TFT_NAVY);
   tft.setTextColor(TFT_WHITE, TFT_NAVY);
-  tft.drawString(appMode == AppMode::Wifi ? "WiFi Analyzer" : "Bluetooth", 8, 6);
-
-  tft.setTextColor(pmuReady ? TFT_GREEN : TFT_DARKGREY, TFT_NAVY);
-  if (batteryCharging) {
-    drawChargingBolt(101, 6, TFT_YELLOW, TFT_NAVY);
-  } else {
-    tft.fillRect(101, 6, 9, 16, TFT_NAVY);
-  }
-  tft.drawString(batteryLabel(), 112, 6);
+  tft.drawString(appMode == AppMode::Wifi ? "Wifi" : "Bluetooth", 8, 6);
 
   const bool activeScan = appMode == AppMode::Wifi ? scanning : bleScanning;
-  tft.setTextColor(activeScan ? TFT_YELLOW : TFT_CYAN, TFT_NAVY);
-  String status;
   if (activeScan) {
-    status = "Scanning";
-  } else if (appMode == AppMode::Wifi) {
+    tft.setTextColor(TFT_YELLOW, TFT_NAVY);
+    tft.drawString("Scanning", 101, 6);
+  } else {
+    tft.setTextColor(pmuReady ? TFT_GREEN : TFT_DARKGREY, TFT_NAVY);
+    if (batteryCharging) {
+      drawChargingBolt(101, 6, TFT_YELLOW, TFT_NAVY);
+    }
+    tft.drawString(batteryLabel(), batteryCharging ? 112 : 101, 6);
+  }
+
+  tft.setTextColor(TFT_CYAN, TFT_NAVY);
+  String status;
+  if (appMode == AppMode::Wifi) {
     status = String(networkCount) + " APs";
     if (networkCount > 0) {
       status += " " + String(selectedNetwork + 1) + "/" + String(networkCount);
@@ -525,7 +533,9 @@ void drawDetails()
   tft.drawString(fitText(displaySsid(network), 21), 8, panelY + 6);
 
   tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawRightString(macDetailView ? "MAC" : String(selectedNetwork + 1) + "/" + String(networkCount), tft.width() - 8, panelY + 6);
+  if (macDetailView) {
+    tft.drawRightString("MAC", tft.width() - 8, panelY + 6);
+  }
 
   if (macDetailView) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
@@ -589,10 +599,9 @@ void drawDetails()
   }
 }
 
-void drawAnalyzer()
+void drawWifiBody()
 {
-  tft.fillScreen(TFT_BLACK);
-  drawHeader();
+  tft.fillRect(0, 28, tft.width(), detailPanelY() - 28, TFT_BLACK);
 
   tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
   tft.drawString("SSID", 8, 29);
@@ -612,6 +621,12 @@ void drawAnalyzer()
   }
 
   drawDetails();
+}
+
+void drawAnalyzer()
+{
+  drawHeader();
+  drawWifiBody();
 }
 
 void drawBleRow(int row, int deviceIndex)
@@ -711,10 +726,11 @@ void drawBleDetails(int panelY)
   }
 }
 
-void drawBleScanner()
+void drawBleBody()
 {
-  tft.fillScreen(TFT_BLACK);
-  drawHeader();
+  const int visibleRows = min(bleDeviceCount, 3);
+  const int panelY = 38 + (max(1, visibleRows) * 20);
+  tft.fillRect(0, 28, tft.width(), panelY - 28, TFT_BLACK);
 
   tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
   tft.drawString("BLE name", 8, 29);
@@ -722,7 +738,6 @@ void drawBleScanner()
   tft.drawRightString("dBm", 276, 29);
   tft.drawRightString("Seen", 314, 29);
 
-  const int visibleRows = min(bleDeviceCount, 3);
   int firstDevice = 0;
   if (selectedBleDevice >= visibleRows) {
     firstDevice = selectedBleDevice - visibleRows + 1;
@@ -732,16 +747,42 @@ void drawBleScanner()
     drawBleRow(i, firstDevice + i);
   }
 
-  drawBleDetails(38 + (max(1, visibleRows) * 20));
+  drawBleDetails(panelY);
+}
+
+void drawBleScanner()
+{
+  drawHeader();
+  drawBleBody();
 }
 
 void drawCurrentScreen()
 {
+  tft.startWrite();
   if (appMode == AppMode::Wifi) {
     drawAnalyzer();
   } else {
     drawBleScanner();
   }
+  tft.endWrite();
+}
+
+void drawCurrentHeader()
+{
+  tft.startWrite();
+  drawHeader();
+  tft.endWrite();
+}
+
+void drawCurrentBody()
+{
+  tft.startWrite();
+  if (appMode == AppMode::Wifi) {
+    drawWifiBody();
+  } else {
+    drawBleBody();
+  }
+  tft.endWrite();
 }
 
 void collectScanResults(int found)
@@ -825,7 +866,7 @@ void startWifiScan()
   WiFi.scanDelete();
   const int result = WiFi.scanNetworks(true, true);
   if (appMode == AppMode::Wifi) {
-    drawCurrentScreen();
+    drawCurrentHeader();
   }
 
   if (result >= 0) {
@@ -844,7 +885,7 @@ void startBleScan()
   bleScan->clearResults();
   bleScan->start(3, false, true);
   if (appMode == AppMode::Bluetooth) {
-    drawCurrentScreen();
+    drawCurrentHeader();
   }
 }
 
@@ -906,7 +947,7 @@ void toggleDetailView(const char *reason)
     Serial.printf("BLE detail view via %s: %s\n", reason, bleDetailView ? "address" : "RSSI history");
   }
 
-  drawCurrentScreen();
+  drawCurrentBody();
 }
 
 void switchMode()
@@ -979,7 +1020,6 @@ void handleButtons()
                   digitalRead(upperButton.pin),
                   lowerButton.label,
                   digitalRead(lowerButton.pin));
-    drawCurrentScreen();
     return;
   }
 
