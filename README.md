@@ -1,8 +1,13 @@
+
+
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
 # LilyGO T-Display C5 WiFi Analyzer
 
 PlatformIO WiFi analyzer for the LilyGO T-Display C5.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/04c630fe-b077-48b6-a377-c4726b4ede97" width="500" alt="LilyGO T-Display C5 WiFi Analyzer">
+</p>
 
 ## What It Does
 
