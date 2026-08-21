@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # Agent Instructions
 
 Before making code or documentation changes, read `PROJECT_MEMORY.md` for board details, pin mappings, expansion notes, and project history.

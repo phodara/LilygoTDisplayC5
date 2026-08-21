@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # Project Notes
 
 ## Wi-Fi Analyzer Feature Ideas
@@ -12,7 +14,7 @@
    Highlight the strongest 2.4 GHz and strongest 5 GHz AP, plus a simple best-candidate indicator.
 
 4. [ ] SSID Grouping
-   Group networks with the same SSID, so mesh networks like HHMESH show as one SSID with multiple BSSIDs/APs.
+   Group networks with the same SSID, so mesh networks like MeshNet show as one SSID with multiple BSSIDs/APs.
 
 5. [x] BSSID / MAC Detail Page
    Show the AP MAC address, useful for distinguishing mesh nodes or extenders.

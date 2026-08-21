@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # Bluetooth Scanner Feature Plan
 
 The LilyGO T-Display C5 can also work as a Bluetooth Low Energy scanner. Instead of using BLE as a control channel, this mode listens for nearby BLE advertisements and shows nearby devices with signal strength.

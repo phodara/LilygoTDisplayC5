@@ -53,14 +53,14 @@
       <text class="tiny muted" x="312" y="42" text-anchor="end">Band</text>
 
       <rect class="selected" x="0" y="32" width="320" height="21"/>
-      <text class="tiny" x="8" y="47">HHMESH</text>
+      <text class="tiny" x="8" y="47">MeshNet</text>
       <rect x="138" y="37" width="52" height="10" fill="none" stroke="#4b5562" stroke-width="1"/>
       <rect x="139" y="38" width="38" height="8" fill="#45d66e"/>
       <text class="tiny green" x="232" y="47" text-anchor="end">-50</text>
       <text class="tiny" x="266" y="47" text-anchor="end">149</text>
       <text class="tiny" x="312" y="47" text-anchor="end">5G</text>
 
-      <text class="tiny" x="8" y="69">Office-IoT</text>
+      <text class="tiny" x="8" y="69">Lab-IoT</text>
       <rect x="138" y="59" width="52" height="10" fill="none" stroke="#4b5562" stroke-width="1"/>
       <rect x="139" y="60" width="25" height="8" fill="#ffe66b"/>
       <text class="tiny yellow" x="232" y="69" text-anchor="end">-68</text>
@@ -68,10 +68,10 @@
       <text class="tiny" x="312" y="69" text-anchor="end">2.4G</text>
 
       <line class="divider" x1="0" y1="80" x2="320" y2="80"/>
-      <text class="tiny" x="8" y="99">HHMESH</text>
+      <text class="tiny" x="8" y="99">MeshNet</text>
       <text class="tiny cyan" x="312" y="99" text-anchor="end">MAC</text>
       <text class="tiny label" x="8" y="117">BSSID</text>
-      <text class="tiny cyan" x="76" y="117">A4:2B:B0:18:4C:90</text>
+      <text class="tiny cyan" x="76" y="117">AA:BB:CC:12:34:56</text>
       <text class="tiny label" x="8" y="135">SEC WPA2/3  hidden no</text>
       <text class="tiny label" x="8" y="153">5G ch 149  load 1</text>
       <text class="tiny label" x="8" y="169">RSSI -50 dBm  75%</text>
@@ -128,4 +128,5 @@
     <text class="calloutText" x="423" y="600">selected network's channel.</text>
     <path class="leaderDim" d="M 548 535 C 520 482, 456 430, 220 424"/>
   </g>
+  <text x="600" y="700" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" fill="#7f8b99">Copyright (c) 2026 Paul Hodara. MIT License.</text>
 </svg>

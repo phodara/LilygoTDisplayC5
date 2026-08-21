@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # Bluetooth Feature Plan
 
 This device should use Bluetooth Low Energy (BLE) rather than classic Bluetooth Serial. BLE fits the ESP32-C5 well and works cleanly with phone apps, laptops, and small control panels.

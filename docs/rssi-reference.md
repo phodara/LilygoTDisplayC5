@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # RSSI Reference
 
 RSSI is shown in dBm, which means "decibels relative to 1 milliwatt."

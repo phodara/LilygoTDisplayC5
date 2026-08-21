@@ -1,3 +1,5 @@
+<!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
+
 # LilyGO T-Display C5 WiFi Analyzer
 
 PlatformIO WiFi analyzer for the LilyGO T-Display C5.
@@ -11,10 +13,23 @@ PlatformIO WiFi analyzer for the LilyGO T-Display C5.
 - Scans nearby WiFi networks every few seconds.
 - Shows SSID, RSSI, signal bar, channel, band, and security.
 - Draws a compact RSSI history graph for the selected access point.
-- Uses the two top buttons to move previous/next through network details.
+- Scans Bluetooth Low Energy devices in a separate Bluetooth mode.
+- Uses the upper button to scroll through the current WiFi/BLE list.
+- Uses the lower button to toggle detail/RSSI history for the highlighted item.
+- Uses both buttons held together to switch between WiFi and Bluetooth modes.
 - Prints the scan table to Serial Monitor.
 
 Passive WiFi scans can see RSSI, channel, band, and security, but they do not reliably expose internet throughput or AP channel width. The display therefore shows channel load as the practical bandwidth-health indicator and marks raw scan bandwidth as `n/a`.
+
+## Button Controls
+
+| Control | WiFi mode | Bluetooth mode |
+| --- | --- | --- |
+| Upper button | Select next access point | Select next BLE device |
+| Lower button | Toggle RSSI history / BSSID detail | Toggle RSSI history / address detail |
+| Both buttons held | Switch to Bluetooth mode | Switch to WiFi mode |
+
+The selected item wraps around when it reaches the end of the list. The both-button mode switch uses a short hold to avoid accidental mode changes while scrolling.
 
 ## Feature Notes
 
@@ -41,6 +56,12 @@ If upload does not start automatically, hold `BOOT`, tap `RST`, release `RST`, t
 ```sh
 pio device monitor
 ```
+
+## License
+
+Copyright (c) 2026 Paul Hodara.
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Key Pins
 
