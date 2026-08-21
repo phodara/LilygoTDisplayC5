@@ -100,7 +100,9 @@ static uint32_t buttonsArmAtMs = 0;
 static uint32_t lastBatteryMs = 0;
 static uint32_t scanCount = 0;
 static float batteryVoltage = 0.0f;
+static float batteryCurrent = 0.0f;
 static int batteryPercent = -1;
+static bool batteryCharging = false;
 
 void drawAnalyzer();
 
@@ -187,13 +189,22 @@ void updateBattery(bool forceRedraw = false)
   }
 
   batteryVoltage = pmu.getBatteryVoltage();
+  batteryCurrent = pmu.getBatteryCurrent();
   batteryPercent = constrain(static_cast<int>(pmu.getSOC()), 0, 100);
+  batteryCharging = batteryCurrent > 0.02f;
 
   if (forceRedraw) {
     return;
   }
 
   drawAnalyzer();
+}
+
+void drawChargingBolt(int x, int y, uint16_t color, uint16_t bg)
+{
+  tft.fillRect(x, y, 9, 16, bg);
+  tft.fillTriangle(x + 5, y, x, y + 8, x + 5, y + 8, color);
+  tft.fillTriangle(x + 3, y + 7, x + 8, y + 7, x + 3, y + 15, color);
 }
 
 const char *bandLabel(int32_t channel)
@@ -267,6 +278,11 @@ void drawHeader()
   tft.drawString("WiFi Analyzer", 8, 6);
 
   tft.setTextColor(pmuReady ? TFT_GREEN : TFT_DARKGREY, TFT_NAVY);
+  if (batteryCharging) {
+    drawChargingBolt(101, 6, TFT_YELLOW, TFT_NAVY);
+  } else {
+    tft.fillRect(101, 6, 9, 16, TFT_NAVY);
+  }
   tft.drawString(batteryLabel(), 112, 6);
 
   tft.setTextColor(scanning ? TFT_YELLOW : TFT_CYAN, TFT_NAVY);
