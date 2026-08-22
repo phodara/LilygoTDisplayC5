@@ -24,7 +24,7 @@ PlatformIO WiFi analyzer for the LilyGO T-Display C5.
 - De-duplicates named BLE devices that rotate addresses.
 - Reduces display flicker by redrawing only changed screen regions.
 - Uses the upper button to scroll through the current WiFi/BLE list.
-- Uses the lower button to cycle WiFi RSSI history, BSSID detail, and full AP list views for the highlighted item.
+- Uses the lower button to cycle RSSI history, detail, and full list views for the highlighted WiFi or BLE item.
 - Uses both buttons held together to switch between WiFi and Bluetooth modes.
 - Prints the scan table to Serial Monitor.
 
@@ -35,7 +35,7 @@ Passive WiFi scans can see RSSI, channel, band, security, and the number of BSSI
 | Control | WiFi mode | Bluetooth mode |
 | --- | --- | --- |
 | Upper button | Select next access point | Select next BLE device |
-| Lower button | Cycle RSSI history / BSSID detail / full AP list | Toggle RSSI history / address detail |
+| Lower button | Cycle RSSI history / BSSID detail / full AP list | Cycle RSSI history / address detail / full device list |
 | Both buttons tapped | No action | Toggle passive/active BLE scan |
 | Both buttons held | Switch to Bluetooth mode | Switch to WiFi mode |
 

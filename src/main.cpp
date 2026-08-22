@@ -92,6 +92,12 @@ enum class WifiDetailMode {
   List,
 };
 
+enum class BleDetailMode {
+  History,
+  Address,
+  List,
+};
+
 TDisplayC5 tft;
 AXP2602 pmu(AXP2602_I2C_ADDR_DEFAULT, Wire);
 
@@ -129,7 +135,7 @@ static bool bleScanning = false;
 static bool bleActiveScan = false;
 static bool buttonsArmed = false;
 static WifiDetailMode wifiDetailMode = WifiDetailMode::History;
-static bool bleDetailView = false;
+static BleDetailMode bleDetailMode = BleDetailMode::History;
 static bool bothButtonsWasPressed = false;
 static bool pmuReady = false;
 static uint32_t lastScanMs = 0;
@@ -718,14 +724,14 @@ void drawAnalyzer()
   drawWifiBody();
 }
 
-void drawBleRow(int row, int deviceIndex)
+void drawBleRow(int row, int deviceIndex, int startY = 34, int rowHeight = 20)
 {
   const BleDeviceInfo &device = bleDevices[deviceIndex];
-  const int y = 34 + (row * 20);
+  const int y = startY + (row * rowHeight);
   const bool selected = deviceIndex == selectedBleDevice;
   const uint16_t bg = selected ? TFT_DARKCYAN : TFT_BLACK;
 
-  tft.fillRect(0, y - 2, tft.width(), 19, bg);
+  tft.fillRect(0, y - 2, tft.width(), rowHeight - 1, bg);
   tft.setTextColor(TFT_WHITE, bg);
   tft.drawString(fitText(displayBleName(device), 22), 8, y);
 
@@ -754,12 +760,12 @@ void drawBleDetails(int panelY)
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.drawString(fitText(displayBleName(device), 21), 8, panelY + 6);
 
-  if (!bleDetailView) {
+  if (bleDetailMode == BleDetailMode::History) {
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
     tft.drawRightString(String(selectedBleDevice + 1) + "/" + String(bleDeviceCount), tft.width() - 8, panelY + 6);
   }
 
-  if (bleDetailView) {
+  if (bleDetailMode == BleDetailMode::Address) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
     tft.drawString("ADDR", 8, panelY + 24);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
@@ -818,8 +824,43 @@ void drawBleDetails(int panelY)
   }
 }
 
+void drawBleList()
+{
+  tft.fillRect(0, 28, tft.width(), tft.height() - 28, TFT_BLACK);
+
+  tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  tft.drawString("BLE name", 8, 29);
+  tft.drawString("Signal", 184, 29);
+  tft.drawRightString("dBm", 276, 29);
+  tft.drawRightString("Seen", 314, 29);
+
+  if (bleDeviceCount == 0) {
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString(bleScanning ? "Scanning for BLE devices..." : "No BLE devices found", 8, 54);
+    tft.drawString(String("Scan mode ") + bleScanModeLabel(), 8, 72);
+    return;
+  }
+
+  const int rowHeight = 20;
+  const int maxRows = max(1, static_cast<int>((tft.height() - 34) / rowHeight));
+  const int visibleRows = min(bleDeviceCount, maxRows);
+  int firstDevice = 0;
+  if (selectedBleDevice >= visibleRows) {
+    firstDevice = selectedBleDevice - visibleRows + 1;
+  }
+
+  for (int i = 0; i < visibleRows; i++) {
+    drawBleRow(i, firstDevice + i, 34, rowHeight);
+  }
+}
+
 void drawBleBody()
 {
+  if (bleDetailMode == BleDetailMode::List) {
+    drawBleList();
+    return;
+  }
+
   const int visibleRows = min(bleDeviceCount, 3);
   const int panelY = 38 + (max(1, visibleRows) * 20);
   tft.fillRect(0, 28, tft.width(), panelY - 28, TFT_BLACK);
@@ -1068,16 +1109,12 @@ void selectNextBleDevice(const char *reason)
 void toggleDetailView(const char *reason)
 {
   if (appMode == AppMode::Wifi) {
-    if (networkCount == 0) {
-      return;
-    }
     if (wifiDetailMode == WifiDetailMode::History) {
       wifiDetailMode = WifiDetailMode::Bssid;
     } else if (wifiDetailMode == WifiDetailMode::Bssid) {
       wifiDetailMode = WifiDetailMode::List;
     } else {
       wifiDetailMode = WifiDetailMode::History;
-      clearHistory();
     }
 
     const char *modeLabel = wifiDetailMode == WifiDetailMode::History ? "RSSI history" :
@@ -1085,11 +1122,18 @@ void toggleDetailView(const char *reason)
                                                                          "AP list";
     Serial.printf("WiFi detail view via %s: %s\n", reason, modeLabel);
   } else {
-    if (bleDeviceCount == 0) {
-      return;
+    if (bleDetailMode == BleDetailMode::History) {
+      bleDetailMode = BleDetailMode::Address;
+    } else if (bleDetailMode == BleDetailMode::Address) {
+      bleDetailMode = BleDetailMode::List;
+    } else {
+      bleDetailMode = BleDetailMode::History;
     }
-    bleDetailView = !bleDetailView;
-    Serial.printf("BLE detail view via %s: %s\n", reason, bleDetailView ? "address" : "RSSI history");
+
+    const char *modeLabel = bleDetailMode == BleDetailMode::History ? "RSSI history" :
+                            bleDetailMode == BleDetailMode::Address ? "address" :
+                                                                      "device list";
+    Serial.printf("BLE detail view via %s: %s\n", reason, modeLabel);
   }
 
   drawCurrentBody();
