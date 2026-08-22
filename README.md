@@ -59,6 +59,7 @@ Version 2 adds a practical Bluetooth scanner mode and display redraw improvement
 - [Bluetooth scanner feature plan](docs/bluetooth-scanner.md)
 - [Display flicker fix](docs/display-flicker-fix.md)
 - [RSSI reference](docs/rssi-reference.md)
+- [WiFi region behavior](docs/wifi-region-behavior.md)
 
 ## Build
 
