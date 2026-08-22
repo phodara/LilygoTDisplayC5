@@ -94,7 +94,7 @@ static constexpr uint8_t MAX_BLE_DEVICES = 32;
 static constexpr uint8_t HISTORY_SAMPLES = 40;
 static constexpr uint32_t SCAN_INTERVAL_MS = 7000;
 static constexpr uint32_t BLE_SCAN_INTERVAL_MS = 5000;
-static constexpr uint32_t BLE_STALE_MS = 30000;
+static constexpr uint32_t BLE_STALE_MS = 60000;
 static constexpr uint32_t BLE_HISTORY_INTERVAL_MS = 700;
 static constexpr uint32_t BUTTON_DEBOUNCE_MS = 220;
 static constexpr uint32_t MODE_HOLD_MS = 700;
@@ -117,6 +117,7 @@ static int selectedNetwork = 0;
 static int selectedBleDevice = 0;
 static bool scanning = false;
 static bool bleScanning = false;
+static bool bleActiveScan = false;
 static bool buttonsArmed = false;
 static bool macDetailView = false;
 static bool bleDetailView = false;
@@ -214,6 +215,11 @@ String displayBleName(const BleDeviceInfo &device)
   return "<unnamed>";
 }
 
+const char *bleScanModeLabel()
+{
+  return bleActiveScan ? "active" : "passive";
+}
+
 void sortBleDevices()
 {
   for (int i = 0; i < bleDeviceCount - 1; i++) {
@@ -258,6 +264,15 @@ void updateBleDevice(const String &address, const String &name, int32_t rssi, bo
     }
   }
 
+  if (index < 0 && name.length() > 0) {
+    for (int i = 0; i < bleDeviceCount; i++) {
+      if (bleDevices[i].name == name) {
+        index = i;
+        break;
+      }
+    }
+  }
+
   if (index < 0) {
     if (bleDeviceCount < MAX_BLE_DEVICES) {
       index = bleDeviceCount++;
@@ -267,7 +282,9 @@ void updateBleDevice(const String &address, const String &name, int32_t rssi, bo
   }
 
   bleDevices[index].address = address;
-  bleDevices[index].name = name;
+  if (name.length() > 0 || bleDevices[index].name.length() == 0) {
+    bleDevices[index].name = name;
+  }
   bleDevices[index].rssi = rssi;
   bleDevices[index].lastSeenMs = now;
   bleDevices[index].connectable = connectable;
@@ -657,6 +674,7 @@ void drawBleDetails(int panelY)
   if (bleDeviceCount == 0) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
     tft.drawString(bleScanning ? "Scanning for BLE devices..." : "No BLE devices found", 8, panelY + 14);
+    tft.drawString(String("Scan mode ") + bleScanModeLabel(), 8, panelY + 32);
     return;
   }
 
@@ -681,6 +699,7 @@ void drawBleDetails(int panelY)
                      (device.connectable ? "connectable" : "beacon"),
                    8,
                    panelY + 60);
+    tft.drawString(String("Scan mode ") + bleScanModeLabel(), 8, panelY + 78);
     if (pmuReady) {
       tft.drawRightString(String(batteryVoltage, 2) + "V", tft.width() - 8, panelY + 78);
     }
@@ -690,7 +709,8 @@ void drawBleDetails(int panelY)
   tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
   tft.drawString(String("RSSI ") + String(device.rssi) + " dBm  " + String(signalPercent(device.rssi)) + "%", 8, panelY + 20);
   tft.drawString(String("Seen ") + String((millis() - device.lastSeenMs) / 1000) + "s  " +
-                   (device.connectable ? "connectable" : "beacon"),
+                   (device.connectable ? "connectable" : "beacon") + "  " +
+                   bleScanModeLabel(),
                  8,
                  panelY + 36);
 
@@ -881,8 +901,9 @@ void startBleScan()
   }
 
   bleScanning = true;
-  Serial.println("Starting BLE scan...");
+  Serial.printf("Starting BLE %s scan...\n", bleScanModeLabel());
   bleScan->clearResults();
+  bleScan->setActiveScan(bleActiveScan);
   bleScan->start(3, false, true);
   if (appMode == AppMode::Bluetooth) {
     drawCurrentHeader();
@@ -894,9 +915,26 @@ void initBleScanner()
   NimBLEDevice::init("LilyGO-RF-Scanner");
   bleScan = NimBLEDevice::getScan();
   bleScan->setScanCallbacks(&bleCallbacks, false);
-  bleScan->setActiveScan(false);
+  bleScan->setActiveScan(bleActiveScan);
   bleScan->setInterval(100);
   bleScan->setWindow(80);
+}
+
+void toggleBleActiveScan(const char *reason)
+{
+  if (appMode != AppMode::Bluetooth || !bleScan) {
+    return;
+  }
+
+  bleActiveScan = !bleActiveScan;
+  if (bleScanning) {
+    bleScan->stop();
+    bleScanning = false;
+  }
+
+  Serial.printf("BLE scan mode via %s: %s\n", reason, bleScanModeLabel());
+  drawCurrentScreen();
+  startBleScan();
 }
 
 void selectNextWifiNetwork(const char *reason)
@@ -1042,6 +1080,18 @@ void handleButtons()
       lowerButton.wasPressed = true;
       lastButtonMs = now;
     }
+    return;
+  }
+
+  if (bothButtonsPressedAtMs != 0 && !bothButtonsWasPressed) {
+    if (appMode == AppMode::Bluetooth) {
+      toggleBleActiveScan("both buttons");
+    }
+    bothButtonsPressedAtMs = 0;
+    bothButtonsWasPressed = false;
+    upperButton.wasPressed = upperPressed;
+    lowerButton.wasPressed = lowerPressed;
+    lastButtonMs = now;
     return;
   }
 

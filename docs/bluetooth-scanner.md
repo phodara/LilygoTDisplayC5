@@ -1,6 +1,6 @@
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
-# Bluetooth Scanner Feature Plan
+# Bluetooth Scanner
 
 The LilyGO T-Display C5 can also work as a Bluetooth Low Energy scanner. Instead of using BLE as a control channel, this mode listens for nearby BLE advertisements and shows nearby devices with signal strength.
 
@@ -25,7 +25,48 @@ BLE scanning can usually detect:
 
 Some devices rotate their Bluetooth addresses for privacy, so a device may not always keep the same address. Device names are also optional, so many scan results will appear unnamed.
 
-## First Version
+## Current Version
+
+The current firmware has a separate Bluetooth scanner mode. WiFi and BLE scans do not run at the same time; holding both top buttons switches between the WiFi analyzer and Bluetooth scanner.
+
+Displayed fields:
+
+| Field | Meaning |
+| --- | --- |
+| Name | Advertised BLE device name, or a short fallback based on the address. |
+| Address | BLE address shown in detail view. |
+| RSSI | Signal strength in dBm. |
+| Signal bar | Visual signal strength. |
+| Seen | Time since the device was last seen. |
+| Connectable | Whether the advertisement reports a connectable device or beacon-like advertiser. |
+| Scan mode | Passive or active BLE scan mode. |
+
+Controls:
+
+| Control | Action |
+| --- | --- |
+| Upper button | Move to the next detected BLE device. |
+| Lower button | Toggle between RSSI graph and address/detail view. |
+| Both buttons tapped | Toggle passive/active BLE scan mode. |
+| Both buttons held | Switch between WiFi and Bluetooth modes. |
+
+## Passive And Active Scanning
+
+Passive scanning only listens for normal BLE advertisements. It is quieter and matches the original scanner behavior.
+
+Active scanning asks advertisers for scan-response data. Some devices put their local name in the scan response, so active mode can reveal names that passive mode misses. Active scanning still cannot force a device to reveal a friendly name; phones, earbuds, locks, and other privacy-conscious devices may remain unnamed or may rotate their address.
+
+The Bluetooth detail screen shows the current scan mode. Serial Monitor also logs scan starts as passive or active.
+
+## Device Retention And De-Duplication
+
+BLE devices can advertise intermittently. Battery-powered sensors, locks, earbuds, phones, and watches may appear in bursts rather than continuously. The scanner keeps devices visible for 60 seconds after their last advertisement so the list does not flicker excessively.
+
+If a named device is later seen without a name, the scanner preserves the previously known name. If a named device appears with a new BLE address but the same advertised name, the scanner merges it into the existing row. This cleans up devices that use rotating private addresses, such as a single Meshtastic node showing the same name under different addresses.
+
+The tradeoff is that two real nearby devices with the exact same advertised name can be merged into one row.
+
+## Original Plan
 
 The first version should mirror the current WiFi analyzer layout.
 

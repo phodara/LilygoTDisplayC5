@@ -19,6 +19,10 @@ PlatformIO WiFi analyzer for the LilyGO T-Display C5.
 - Shows SSID, RSSI, signal bar, channel, band, and security.
 - Draws a compact RSSI history graph for the selected access point.
 - Scans Bluetooth Low Energy devices in a separate Bluetooth mode.
+- Supports passive and active BLE scan modes.
+- Keeps intermittent BLE devices visible briefly after their last advertisement.
+- De-duplicates named BLE devices that rotate addresses.
+- Reduces display flicker by redrawing only changed screen regions.
 - Uses the upper button to scroll through the current WiFi/BLE list.
 - Uses the lower button to toggle detail/RSSI history for the highlighted item.
 - Uses both buttons held together to switch between WiFi and Bluetooth modes.
@@ -32,14 +36,28 @@ Passive WiFi scans can see RSSI, channel, band, and security, but they do not re
 | --- | --- | --- |
 | Upper button | Select next access point | Select next BLE device |
 | Lower button | Toggle RSSI history / BSSID detail | Toggle RSSI history / address detail |
+| Both buttons tapped | No action | Toggle passive/active BLE scan |
 | Both buttons held | Switch to Bluetooth mode | Switch to WiFi mode |
 
 The selected item wraps around when it reaches the end of the list. The both-button mode switch uses a short hold to avoid accidental mode changes while scrolling.
 
+## Version 2 Improvements
+
+Version 2 adds a practical Bluetooth scanner mode and display redraw improvements:
+
+- BLE scanner mode shows nearby BLE names, address details, RSSI, signal bars, last-seen age, and RSSI history.
+- Passive scan mode listens only for advertisements.
+- Active scan mode requests scan-response data, which can reveal names for some BLE devices.
+- BLE entries remain visible for 60 seconds after last seen, which helps with low-power devices that advertise intermittently.
+- Named BLE devices are de-duplicated when they appear with changing private addresses.
+- Display flicker is reduced by avoiding full-screen clears during routine updates.
+
 ## Feature Notes
 
+- [Changelog](CHANGELOG.md)
 - [Bluetooth feature plan](docs/bluetooth-feature.md)
 - [Bluetooth scanner feature plan](docs/bluetooth-scanner.md)
+- [Display flicker fix](docs/display-flicker-fix.md)
 - [RSSI reference](docs/rssi-reference.md)
 
 ## Build
