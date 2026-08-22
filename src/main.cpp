@@ -92,7 +92,7 @@ AXP2602 pmu(AXP2602_I2C_ADDR_DEFAULT, Wire);
 static constexpr uint8_t MAX_NETWORKS = 24;
 static constexpr uint8_t MAX_BLE_DEVICES = 32;
 static constexpr uint8_t HISTORY_SAMPLES = 40;
-static constexpr uint32_t SCAN_INTERVAL_MS = 7000;
+static constexpr uint32_t SCAN_INTERVAL_MS = 10000;
 static constexpr uint32_t BLE_SCAN_INTERVAL_MS = 5000;
 static constexpr uint32_t BLE_STALE_MS = 60000;
 static constexpr uint32_t BLE_HISTORY_INTERVAL_MS = 700;
@@ -130,6 +130,7 @@ static uint32_t lastButtonMs = 0;
 static uint32_t bothButtonsPressedAtMs = 0;
 static uint32_t buttonsArmAtMs = 0;
 static uint32_t lastBatteryMs = 0;
+static uint32_t nextWifiScanMs = 0;
 static uint32_t scanCount = 0;
 static uint32_t bleScanCount = 0;
 static float batteryVoltage = 0.0f;
@@ -154,6 +155,16 @@ int visibleRowCount()
 int detailPanelY()
 {
   return 36 + (max(1, visibleRowCount()) * 22);
+}
+
+bool timeReached(uint32_t deadlineMs)
+{
+  return static_cast<int32_t>(millis() - deadlineMs) >= 0;
+}
+
+void scheduleNextWifiScan()
+{
+  nextWifiScanMs = millis() + SCAN_INTERVAL_MS;
 }
 
 void clearHistory()
@@ -457,6 +468,14 @@ String fitText(String text, size_t maxChars)
   return text.substring(0, maxChars - 1) + "~";
 }
 
+String bssidSuffix(const String &bssid)
+{
+  if (bssid.length() <= 8) {
+    return bssid;
+  }
+  return bssid.substring(bssid.length() - 8);
+}
+
 int channelLoad(int32_t channel)
 {
   int count = 0;
@@ -552,9 +571,9 @@ void drawDetails()
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.drawString(fitText(displaySsid(network), 21), 8, panelY + 6);
 
-  tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  if (macDetailView) {
-    tft.drawRightString("MAC", tft.width() - 8, panelY + 6);
+  if (!macDetailView) {
+    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.drawRightString("BSSID " + bssidSuffix(network.bssid), tft.width() - 8, panelY + 6);
   }
 
   if (macDetailView) {
@@ -565,7 +584,7 @@ void drawDetails()
 
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
     tft.drawString("SEC " + String(securityLabel(network.auth)) + "  hidden " + String(network.hidden ? "yes" : "no"), 8, panelY + 42);
-    tft.drawString(String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  load " + String(load), 8, panelY + 60);
+    tft.drawString(String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  BSSIDs " + String(load), 8, panelY + 60);
     tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 78);
     if (pmuReady) {
       tft.drawRightString(String(batteryVoltage, 2) + "V", tft.width() - 8, panelY + 78);
@@ -576,7 +595,7 @@ void drawDetails()
   tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
   tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 20);
   String details = String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  " + securityLabel(network.auth) +
-                   "  load " + String(load);
+                   "  BSSIDs " + String(load);
   if (pmuReady) {
     details += "  " + String(batteryVoltage, 2) + "V";
   }
@@ -685,10 +704,10 @@ void drawBleDetails(int panelY)
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.drawString(fitText(displayBleName(device), 21), 8, panelY + 6);
 
-  tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawRightString(bleDetailView ? "ADDR" : String(selectedBleDevice + 1) + "/" + String(bleDeviceCount),
-                      tft.width() - 8,
-                      panelY + 6);
+  if (!bleDetailView) {
+    tft.setTextColor(TFT_CYAN, TFT_BLACK);
+    tft.drawRightString(String(selectedBleDevice + 1) + "/" + String(bleDeviceCount), tft.width() - 8, panelY + 6);
+  }
 
   if (bleDetailView) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
@@ -859,22 +878,37 @@ void collectScanResults(int found)
   WiFi.scanDelete();
   scanCount++;
   scanning = false;
-  lastScanMs = millis();
 
   Serial.printf("Scan %lu complete: %d networks\n", static_cast<unsigned long>(scanCount), networkCount);
   for (int i = 0; i < networkCount; i++) {
-    Serial.printf("%2d  %4ld dBm  ch %2ld  %-4s  %-8s  %s\n",
+    Serial.printf("%2d  %4ld dBm  ch %2ld  %-4s  %-8s  %s  %s\n",
                   i + 1,
                   static_cast<long>(networks[i].rssi),
                   static_cast<long>(networks[i].channel),
                   bandLabel(networks[i].channel),
                   securityLabel(networks[i].auth),
+                  networks[i].bssid.c_str(),
                   displaySsid(networks[i]).c_str());
   }
 
   if (appMode == AppMode::Wifi) {
     drawCurrentScreen();
   }
+
+  lastScanMs = millis();
+  scheduleNextWifiScan();
+}
+
+void finishFailedWifiScan()
+{
+  WiFi.scanDelete();
+  scanning = false;
+  Serial.println("WiFi scan failed");
+  if (appMode == AppMode::Wifi) {
+    drawCurrentScreen();
+  }
+  lastScanMs = millis();
+  scheduleNextWifiScan();
 }
 
 void startWifiScan()
@@ -894,6 +928,8 @@ void startWifiScan()
 
   if (result >= 0) {
     collectScanResults(result);
+  } else if (result == WIFI_SCAN_FAILED) {
+    finishFailedWifiScan();
   }
 }
 
@@ -1014,7 +1050,7 @@ void switchMode()
   appMode = AppMode::Wifi;
   Serial.println("Mode switched to WiFi analyzer");
   drawCurrentScreen();
-  if (!scanning && (networkCount == 0 || millis() - lastScanMs >= SCAN_INTERVAL_MS)) {
+  if (!scanning && (networkCount == 0 || timeReached(nextWifiScanMs))) {
     startWifiScan();
   }
 }
@@ -1185,8 +1221,10 @@ void loop()
     const int result = WiFi.scanComplete();
     if (result >= 0) {
       collectScanResults(result);
+    } else if (result == WIFI_SCAN_FAILED) {
+      finishFailedWifiScan();
     }
-  } else if (appMode == AppMode::Wifi && millis() - lastScanMs >= SCAN_INTERVAL_MS) {
+  } else if (appMode == AppMode::Wifi && timeReached(nextWifiScanMs)) {
     startWifiScan();
   }
 
