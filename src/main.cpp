@@ -486,6 +486,9 @@ void drawHeader()
   if (activeScan) {
     tft.setTextColor(TFT_YELLOW, TFT_NAVY);
     tft.drawString("Scanning", 101, 6);
+  } else if (appMode == AppMode::Bluetooth) {
+    tft.setTextColor(bleActiveScan ? TFT_YELLOW : TFT_GREEN, TFT_NAVY);
+    tft.drawString(bleActiveScan ? "Active" : "Passive", 101, 6);
   } else {
     tft.setTextColor(pmuReady ? TFT_GREEN : TFT_DARKGREY, TFT_NAVY);
     if (batteryCharging) {

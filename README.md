@@ -80,6 +80,16 @@ If upload does not start automatically, hold `BOOT`, tap `RST`, release `RST`, t
 pio device monitor
 ```
 
+## Release Helper
+
+After updating code and documentation for a new version, the reusable release helper can commit, tag, and push the staged release files:
+
+```sh
+./scripts/release.sh v2.1.0 "Release v2.1 BLE scanner refinements"
+```
+
+The script expects a semantic version tag such as `v2.1.0`. Edit `scripts/release.sh` if a future release needs to include different files.
+
 ## License
 
 Copyright (c) 2026 Paul Hodara.
