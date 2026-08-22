@@ -86,6 +86,12 @@ enum class AppMode {
   Bluetooth,
 };
 
+enum class WifiDetailMode {
+  History,
+  Bssid,
+  List,
+};
+
 TDisplayC5 tft;
 AXP2602 pmu(AXP2602_I2C_ADDR_DEFAULT, Wire);
 
@@ -94,11 +100,14 @@ static constexpr uint8_t MAX_BLE_DEVICES = 32;
 static constexpr uint8_t HISTORY_SAMPLES = 40;
 static constexpr uint32_t SCAN_INTERVAL_MS = 10000;
 static constexpr uint32_t BLE_SCAN_INTERVAL_MS = 5000;
+static constexpr uint32_t BLE_SCAN_DURATION_MS = 3000;
 static constexpr uint32_t BLE_STALE_MS = 60000;
 static constexpr uint32_t BLE_HISTORY_INTERVAL_MS = 700;
 static constexpr uint32_t BUTTON_DEBOUNCE_MS = 220;
 static constexpr uint32_t MODE_HOLD_MS = 700;
 static constexpr uint32_t BATTERY_INTERVAL_MS = 5000;
+static constexpr int HEADER_STATUS_X = 101;
+static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
 
 static NetworkInfo networks[MAX_NETWORKS];
 static BleDeviceInfo bleDevices[MAX_BLE_DEVICES];
@@ -119,7 +128,7 @@ static bool scanning = false;
 static bool bleScanning = false;
 static bool bleActiveScan = false;
 static bool buttonsArmed = false;
-static bool macDetailView = false;
+static WifiDetailMode wifiDetailMode = WifiDetailMode::History;
 static bool bleDetailView = false;
 static bool bothButtonsWasPressed = false;
 static bool pmuReady = false;
@@ -499,21 +508,27 @@ void drawHeader()
 {
   tft.fillRect(0, 0, tft.width(), 28, TFT_NAVY);
   tft.setTextColor(TFT_WHITE, TFT_NAVY);
-  tft.drawString(appMode == AppMode::Wifi ? "Wifi" : "Bluetooth", 8, 6);
+  const char *modeTitle = appMode == AppMode::Wifi ? "Wifi" : "Bluetooth";
+  tft.drawString(modeTitle, 8, 6);
 
   const bool activeScan = appMode == AppMode::Wifi ? scanning : bleScanning;
   if (activeScan) {
     tft.setTextColor(TFT_YELLOW, TFT_NAVY);
-    tft.drawString("Scanning", 101, 6);
+    const int scanX = appMode == AppMode::Bluetooth ? (8 + tft.textWidth(modeTitle) + HEADER_BLE_SCAN_MODE_X) / 2 : HEADER_STATUS_X;
+    tft.drawString("Scan", scanX, 6);
+    if (appMode == AppMode::Bluetooth) {
+      tft.setTextColor(TFT_GREEN, TFT_NAVY);
+      tft.drawString(bleActiveScan ? "Active" : "Passive", HEADER_BLE_SCAN_MODE_X, 6);
+    }
   } else if (appMode == AppMode::Bluetooth) {
-    tft.setTextColor(bleActiveScan ? TFT_YELLOW : TFT_GREEN, TFT_NAVY);
-    tft.drawString(bleActiveScan ? "Active" : "Passive", 101, 6);
+    tft.setTextColor(TFT_GREEN, TFT_NAVY);
+    tft.drawString(bleActiveScan ? "Active" : "Passive", HEADER_BLE_SCAN_MODE_X, 6);
   } else {
     tft.setTextColor(pmuReady ? TFT_GREEN : TFT_DARKGREY, TFT_NAVY);
     if (batteryCharging) {
-      drawChargingBolt(101, 6, TFT_YELLOW, TFT_NAVY);
+      drawChargingBolt(HEADER_STATUS_X, 6, TFT_YELLOW, TFT_NAVY);
     }
-    tft.drawString(batteryLabel(), batteryCharging ? 112 : 101, 6);
+    tft.drawString(batteryLabel(), batteryCharging ? HEADER_STATUS_X + 11 : HEADER_STATUS_X, 6);
   }
 
   tft.setTextColor(TFT_CYAN, TFT_NAVY);
@@ -532,14 +547,14 @@ void drawHeader()
   tft.drawRightString(status, tft.width() - 8, 6);
 }
 
-void drawNetworkRow(int row, int networkIndex)
+void drawNetworkRow(int row, int networkIndex, int startY = 34, int rowHeight = 22)
 {
   const NetworkInfo &network = networks[networkIndex];
-  const int y = 34 + (row * 22);
+  const int y = startY + (row * rowHeight);
   const bool selected = networkIndex == selectedNetwork;
   const uint16_t bg = selected ? TFT_DARKCYAN : TFT_BLACK;
 
-  tft.fillRect(0, y - 2, tft.width(), 21, bg);
+  tft.fillRect(0, y - 2, tft.width(), rowHeight - 1, bg);
   tft.setTextColor(TFT_WHITE, bg);
   tft.drawString(fitText(displaySsid(network), 15), 8, y);
 
@@ -571,12 +586,12 @@ void drawDetails()
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.drawString(fitText(displaySsid(network), 21), 8, panelY + 6);
 
-  if (!macDetailView) {
+  if (wifiDetailMode == WifiDetailMode::History) {
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
     tft.drawRightString("BSSID " + bssidSuffix(network.bssid), tft.width() - 8, panelY + 6);
   }
 
-  if (macDetailView) {
+  if (wifiDetailMode == WifiDetailMode::Bssid) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
     tft.drawString("BSSID", 8, panelY + 24);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
@@ -638,8 +653,43 @@ void drawDetails()
   }
 }
 
+void drawWifiList()
+{
+  tft.fillRect(0, 28, tft.width(), tft.height() - 28, TFT_BLACK);
+
+  tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
+  tft.drawString("SSID", 8, 29);
+  tft.drawString("Signal", 138, 29);
+  tft.drawRightString("dBm", 232, 29);
+  tft.drawRightString("Ch", 266, 29);
+  tft.drawRightString("Band", 312, 29);
+
+  if (networkCount == 0) {
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    tft.drawString(scanning ? "Scanning for nearby networks..." : "No networks found yet", 8, 54);
+    return;
+  }
+
+  const int rowHeight = 20;
+  const int maxRows = max(1, static_cast<int>((tft.height() - 34) / rowHeight));
+  const int visibleRows = min(networkCount, maxRows);
+  int firstNetwork = 0;
+  if (selectedNetwork >= visibleRows) {
+    firstNetwork = selectedNetwork - visibleRows + 1;
+  }
+
+  for (int i = 0; i < visibleRows; i++) {
+    drawNetworkRow(i, firstNetwork + i, 34, rowHeight);
+  }
+}
+
 void drawWifiBody()
 {
+  if (wifiDetailMode == WifiDetailMode::List) {
+    drawWifiList();
+    return;
+  }
+
   tft.fillRect(0, 28, tft.width(), detailPanelY() - 28, TFT_BLACK);
 
   tft.setTextColor(TFT_DARKGREY, TFT_BLACK);
@@ -943,9 +993,16 @@ void startBleScan()
   Serial.printf("Starting BLE %s scan...\n", bleScanModeLabel());
   bleScan->clearResults();
   bleScan->setActiveScan(bleActiveScan);
-  bleScan->start(3, false, true);
   if (appMode == AppMode::Bluetooth) {
     drawCurrentHeader();
+  }
+  if (!bleScan->start(BLE_SCAN_DURATION_MS, false, true)) {
+    bleScanning = false;
+    lastBleScanMs = millis();
+    Serial.println("BLE scan failed to start");
+    if (appMode == AppMode::Bluetooth) {
+      drawCurrentHeader();
+    }
   }
 }
 
@@ -1014,8 +1071,19 @@ void toggleDetailView(const char *reason)
     if (networkCount == 0) {
       return;
     }
-    macDetailView = !macDetailView;
-    Serial.printf("WiFi detail view via %s: %s\n", reason, macDetailView ? "BSSID/MAC" : "RSSI history");
+    if (wifiDetailMode == WifiDetailMode::History) {
+      wifiDetailMode = WifiDetailMode::Bssid;
+    } else if (wifiDetailMode == WifiDetailMode::Bssid) {
+      wifiDetailMode = WifiDetailMode::List;
+    } else {
+      wifiDetailMode = WifiDetailMode::History;
+      clearHistory();
+    }
+
+    const char *modeLabel = wifiDetailMode == WifiDetailMode::History ? "RSSI history" :
+                            wifiDetailMode == WifiDetailMode::Bssid   ? "BSSID/MAC" :
+                                                                         "AP list";
+    Serial.printf("WiFi detail view via %s: %s\n", reason, modeLabel);
   } else {
     if (bleDeviceCount == 0) {
       return;

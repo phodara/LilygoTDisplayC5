@@ -171,7 +171,7 @@ void startBleScan()
     return;
   }
 
-  bleScan->start(3, false);
+  bleScan->start(3000, false);
 }
 ```
 

@@ -6,14 +6,11 @@
 
 ### Firmware
 
-- Clarified WiFi channel crowding by renaming the display label from `load` to `BSSIDs`.
-- Added a BSSID suffix to the WiFi RSSI history panel header while keeping the full BSSID on the BSSID detail panel.
-- Removed duplicate-looking mode labels from detail panels:
-  - Removed `MAC` from the right side of the WiFi BSSID detail panel.
-  - Removed `ADDR` from the right side of the Bluetooth address detail panel.
+- Added a third WiFi lower-button mode: a full AP list where the highlighted AP becomes the selected AP for RSSI history and BSSID detail views.
+- Clarified WiFi BSSID labeling, including same-channel `BSSIDs` count, a BSSID suffix on the RSSI history panel, and removal of duplicate-looking detail mode labels.
 - Added BSSID values to WiFi scan serial output.
-- Changed WiFi scan pacing so the next scan waits 10 seconds after results are processed and redrawn, preventing an immediate rescan after a long scan.
-- Added WiFi scan failure handling so failed scans exit the scanning state cleanly before retrying later.
+- Changed WiFi scan pacing so the next scan waits 10 seconds after results are processed and redrawn, and failed scans exit the scanning state cleanly before retrying later.
+- Fixed BLE scan duration to 3000 ms and updated the Bluetooth header to show a yellow `Scan` activity label while keeping the green `Active`/`Passive` mode label visible.
 
 ## v2.0.0
 
