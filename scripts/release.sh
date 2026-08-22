@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [[ $# -lt 2 ]]; then
   echo "Usage: $0 <version> <commit message>"
-  echo "Example: $0 v2.1.0 \"Release v2.1 BLE scanner refinements\""
+  echo "Example: $0 v2.0.1 \"Release v2.0.1 BLE scanner refinements\""
   exit 1
 fi
 
@@ -12,7 +12,7 @@ shift
 message="$*"
 
 if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  echo "Version must look like v2.1.0"
+  echo "Version must look like v2.0.1"
   exit 1
 fi
 

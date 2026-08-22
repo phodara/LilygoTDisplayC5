@@ -5,7 +5,7 @@
 #include <Wire.h>
 #include <driver/gpio.h>
 
-#include <AXP2602.h>
+#include "axp2602.h"
 #include "pin_config.h"
 
 class TDisplayC5 : public lgfx::LGFX_Device {

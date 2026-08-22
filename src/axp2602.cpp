@@ -1,4 +1,4 @@
-#include "AXP2602.h"
+#include "axp2602.h"
 
 AXP2602::AXP2602(uint8_t addr, TwoWire &wire)
     : _addr(addr), _wire(wire)
