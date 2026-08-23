@@ -22,10 +22,10 @@
       .panel { fill: #171f28; stroke: #5b6876; stroke-width: 2; rx: 8; }
       .modeWifi { fill: #12383e; stroke: #30d5c8; stroke-width: 2; rx: 8; }
       .modeBle { fill: #2e294b; stroke: #a78bfa; stroke-width: 2; rx: 8; }
-      .button { fill: #303a44; stroke: #8793a1; stroke-width: 3; }
-      .buttonTop { fill: #5ce0ff; stroke: #d7f7ff; stroke-width: 3; }
-      .buttonBottom { fill: #ffe66b; stroke: #fff5af; stroke-width: 3; }
-      .both { fill: #45d66e; stroke: #b7f7c8; stroke-width: 3; }
+      .sideButton { fill: #d72f2f; stroke: #ffb3a8; stroke-width: 4; }
+      .sideButtonCore { fill: #ff4b3e; }
+      .buttonIcon { fill: #d72f2f; stroke: #ffb3a8; stroke-width: 3; }
+      .buttonIconCore { fill: #ff4b3e; }
       .leader { stroke: #d7e3f4; stroke-width: 3; fill: none; marker-end: url(#arrow); }
       .leaderDim { stroke: #9fb0c4; stroke-width: 2; fill: none; marker-end: url(#arrow); }
       .title { font-family: Inter, Arial, sans-serif; font-size: 42px; font-weight: 800; fill: #ffffff; }
@@ -55,13 +55,17 @@
     <rect class="screen" x="118" y="215" width="556" height="314" rx="14"/>
     <line class="bezelLine" x1="170" y1="552" x2="622" y2="552"/>
 
-    <g id="top-button" filter="url(#buttonShadow)">
-      <rect class="buttonTop" x="250" y="142" width="98" height="34" rx="14"/>
-      <text class="small" x="299" y="164" text-anchor="middle" fill="#06242b">Upper</text>
+    <g id="upper-button" filter="url(#buttonShadow)">
+      <circle class="sideButton" cx="723" cy="272" r="24"/>
+      <circle class="sideButtonCore" cx="723" cy="272" r="14"/>
+      <text class="small" x="723" y="226" text-anchor="middle">Upper</text>
+      <text class="small muted" x="723" y="246" text-anchor="middle">GPIO28</text>
     </g>
     <g id="lower-button" filter="url(#buttonShadow)">
-      <rect class="buttonBottom" x="445" y="142" width="98" height="34" rx="14"/>
-      <text class="small" x="494" y="164" text-anchor="middle" fill="#292500">Lower</text>
+      <circle class="sideButton" cx="723" cy="386" r="24"/>
+      <circle class="sideButtonCore" cx="723" cy="386" r="14"/>
+      <text class="small" x="723" y="440" text-anchor="middle">Lower</text>
+      <text class="small muted" x="723" y="460" text-anchor="middle">GPIO0</text>
     </g>
 
     <g transform="translate(118 215) scale(1.7375)">
@@ -104,33 +108,42 @@
 
   <g id="actions">
     <rect class="panel" x="770" y="170" width="530" height="128"/>
-    <circle class="buttonTop" cx="816" cy="215" r="19"/>
+    <circle class="buttonIcon" cx="816" cy="215" r="19"/>
+    <circle class="buttonIconCore" cx="816" cy="215" r="10"/>
     <text class="label" x="850" y="211">Tap Upper</text>
     <text class="body" x="850" y="238">Selects the next item in the current scan list.</text>
     <text class="small" x="850" y="264">WiFi: next access point   Bluetooth: next BLE device</text>
-    <path class="leader" d="M 770 218 C 660 196, 450 166, 348 159"/>
+    <path class="leader" d="M 770 218 C 742 224, 730 246, 723 272"/>
 
     <rect class="panel" x="770" y="322" width="530" height="142"/>
-    <circle class="buttonBottom" cx="816" cy="369" r="19"/>
+    <circle class="buttonIcon" cx="816" cy="369" r="19"/>
+    <circle class="buttonIconCore" cx="816" cy="369" r="10"/>
     <text class="label" x="850" y="365">Tap Lower</text>
     <text class="body" x="850" y="392">Cycles through the three screen views.</text>
     <text class="small" x="850" y="420">RSSI history  ->  detail panel  ->  full list</text>
-    <path class="leader" d="M 770 372 C 650 305, 560 181, 497 159"/>
+    <path class="leader" d="M 770 372 C 748 372, 736 380, 723 386"/>
 
     <rect class="panel" x="770" y="488" width="530" height="132"/>
-    <circle class="both" cx="802" cy="535" r="17"/>
-    <circle class="both" cx="834" cy="535" r="17"/>
+    <circle class="buttonIcon" cx="802" cy="535" r="17"/>
+    <circle class="buttonIconCore" cx="802" cy="535" r="8"/>
+    <circle class="buttonIcon" cx="834" cy="535" r="17"/>
+    <circle class="buttonIconCore" cx="834" cy="535" r="8"/>
     <text class="label" x="870" y="531">Tap Both</text>
     <text class="body" x="870" y="558">Bluetooth only: toggles BLE scan mode.</text>
     <text class="small" x="870" y="584">Passive listens. Active requests scan-response names.</text>
-    <path class="leaderDim" d="M 770 540 C 645 515, 540 228, 396 159"/>
+    <path class="leaderDim" d="M 770 540 C 716 510, 716 438, 723 386"/>
+    <path class="leaderDim" d="M 770 522 C 716 480, 716 326, 723 272"/>
 
     <rect class="panel" x="770" y="644" width="530" height="124"/>
-    <rect class="both" x="786" y="690" width="64" height="30" rx="13"/>
+    <circle class="buttonIcon" cx="802" cy="705" r="17"/>
+    <circle class="buttonIconCore" cx="802" cy="705" r="8"/>
+    <circle class="buttonIcon" cx="834" cy="705" r="17"/>
+    <circle class="buttonIconCore" cx="834" cy="705" r="8"/>
     <text class="label" x="870" y="695">Hold Both</text>
     <text class="body" x="870" y="722">Switches between WiFi and Bluetooth screens.</text>
     <text class="small" x="870" y="748">Hold threshold: about 700 ms</text>
-    <path class="leaderDim" d="M 770 705 C 600 664, 500 218, 396 159"/>
+    <path class="leaderDim" d="M 770 705 C 690 652, 710 466, 723 386"/>
+    <path class="leaderDim" d="M 770 688 C 690 620, 708 360, 723 272"/>
   </g>
 
   <g id="mode-summary">
