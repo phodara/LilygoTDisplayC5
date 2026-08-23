@@ -44,7 +44,7 @@
       <rect width="320" height="170" fill="#000000"/>
 
       <rect class="header" x="0" y="0" width="320" height="28"/>
-      <text class="small" x="8" y="18">WiFi Analyzer</text>
+      <text class="small" x="8" y="18">Wifi</text>
       <text class="small green" x="112" y="18">BAT 62%</text>
       <text class="small cyan" x="312" y="18" text-anchor="end">13 APs 1/13</text>
 
@@ -73,7 +73,7 @@
       <text class="tiny" x="8" y="99">MeshNet</text>
       <text class="tiny cyan" x="312" y="99" text-anchor="end">1/13</text>
       <text class="tiny" x="8" y="113">RSSI -50 dBm 75%</text>
-      <text class="tiny" x="8" y="129">5G ch 149 WPA2/3 load 1 3.99V</text>
+      <text class="tiny" x="8" y="129">5G ch 149 WPA2/3 BSSIDs 1 3.99V</text>
 
       <rect x="8" y="134" width="304" height="32" fill="none" stroke="#4b5562" stroke-width="1"/>
       <text class="tiny muted" x="11" y="146">-35</text>
@@ -121,14 +121,15 @@
     <rect class="calloutBox" x="70" y="535" width="300" height="92"/>
     <text class="calloutTitle" x="88" y="560">Selected AP Detail</text>
     <text class="calloutText" x="88" y="581">SSID, index, RSSI percent,</text>
-    <text class="calloutText" x="88" y="600">band, channel, security, load,</text>
+    <text class="calloutText" x="88" y="600">band, channel, security, BSSID count,</text>
     <text class="calloutText" x="88" y="619">and battery voltage.</text>
     <path class="leaderDim" d="M 370 578 C 445 510, 330 337, 108 312"/>
 
-    <rect class="calloutBox" x="405" y="535" width="300" height="70"/>
-    <text class="calloutTitle" x="423" y="560">Channel Load</text>
-    <text class="calloutText" x="423" y="581">Counts APs found on the</text>
-    <text class="calloutText" x="423" y="600">selected network's channel.</text>
+    <rect class="calloutBox" x="405" y="535" width="300" height="92"/>
+    <text class="calloutTitle" x="423" y="560">Controls</text>
+    <text class="calloutText" x="423" y="581">Upper selects next AP.</text>
+    <text class="calloutText" x="423" y="600">Lower cycles screen views.</text>
+    <text class="calloutText" x="423" y="619">Hold both for Bluetooth.</text>
     <path class="leaderDim" d="M 548 535 C 520 482, 456 374, 462 376"/>
   </g>
   <text x="600" y="700" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" fill="#7f8b99">Copyright (c) 2026 Paul Hodara. MIT License.</text>

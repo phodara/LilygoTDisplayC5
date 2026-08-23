@@ -42,7 +42,7 @@
       <rect width="320" height="170" fill="#000000"/>
 
       <rect class="header" x="0" y="0" width="320" height="28"/>
-      <text class="small" x="8" y="18">WiFi Analyzer</text>
+      <text class="small" x="8" y="18">Wifi</text>
       <text class="small green" x="112" y="18">BAT 62%</text>
       <text class="small cyan" x="312" y="18" text-anchor="end">13 APs 1/13</text>
 
@@ -69,11 +69,11 @@
 
       <line class="divider" x1="0" y1="80" x2="320" y2="80"/>
       <text class="tiny" x="8" y="99">MeshNet</text>
-      <text class="tiny cyan" x="312" y="99" text-anchor="end">MAC</text>
+      <text class="tiny cyan" x="312" y="99" text-anchor="end">MeshNet</text>
       <text class="tiny label" x="8" y="117">BSSID</text>
       <text class="tiny cyan" x="76" y="117">AA:BB:CC:12:34:56</text>
       <text class="tiny label" x="8" y="135">SEC WPA2/3  hidden no</text>
-      <text class="tiny label" x="8" y="153">5G ch 149  load 1</text>
+      <text class="tiny label" x="8" y="153">5G ch 149  BSSIDs 1</text>
       <text class="tiny label" x="8" y="169">RSSI -50 dBm  75%</text>
       <text class="tiny label" x="312" y="169" text-anchor="end">3.99V</text>
     </g>
@@ -92,9 +92,9 @@
     <path class="leader" d="M 790 222 C 690 204, 470 154, 322 136"/>
 
     <rect class="calloutBox" x="790" y="276" width="320" height="78"/>
-    <text class="calloutTitle" x="808" y="301">MAC Mode Flag</text>
-    <text class="calloutText" x="808" y="322">Replaces the selection index</text>
-    <text class="calloutText" x="808" y="341">when MAC detail mode is active.</text>
+    <text class="calloutTitle" x="808" y="301">Selected SSID</text>
+    <text class="calloutText" x="808" y="322">The detail panel repeats the</text>
+    <text class="calloutText" x="808" y="341">selected network name.</text>
     <path class="leader" d="M 790 315 C 700 280, 645 322, 705 320"/>
 
     <rect class="calloutBox" x="790" y="370" width="320" height="84"/>
@@ -122,10 +122,11 @@
     <text class="calloutText" x="88" y="619">from history to MAC info.</text>
     <path class="leaderDim" d="M 370 578 C 438 496, 330 336, 108 312"/>
 
-    <rect class="calloutBox" x="405" y="535" width="300" height="70"/>
-    <text class="calloutTitle" x="423" y="560">Channel Load</text>
-    <text class="calloutText" x="423" y="581">Counts APs found on the</text>
-    <text class="calloutText" x="423" y="600">selected network's channel.</text>
+    <rect class="calloutBox" x="405" y="535" width="300" height="92"/>
+    <text class="calloutTitle" x="423" y="560">Controls</text>
+    <text class="calloutText" x="423" y="581">Upper selects next AP.</text>
+    <text class="calloutText" x="423" y="600">Lower cycles screen views.</text>
+    <text class="calloutText" x="423" y="619">Hold both for Bluetooth.</text>
     <path class="leaderDim" d="M 548 535 C 520 482, 456 430, 220 424"/>
   </g>
   <text x="600" y="700" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" fill="#7f8b99">Copyright (c) 2026 Paul Hodara. MIT License.</text>

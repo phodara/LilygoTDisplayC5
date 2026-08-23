@@ -44,7 +44,7 @@
 
       <rect class="header" x="0" y="0" width="320" height="28"/>
       <text class="small" x="8" y="18">Bluetooth</text>
-      <text class="small green" x="112" y="18">BAT 94%</text>
+      <text class="small green" x="160" y="18">Passive</text>
       <text class="small cyan" x="312" y="18" text-anchor="end">7 BLE 1/7</text>
 
       <text class="tiny muted" x="8" y="42">BLE name</text>
@@ -75,7 +75,7 @@
       <text class="tiny" x="8" y="117">AirPods Pro</text>
       <text class="tiny cyan" x="312" y="117" text-anchor="end">1/7</text>
       <text class="tiny label" x="8" y="131">RSSI -49 dBm 76%</text>
-      <text class="tiny label" x="8" y="147">Seen 1s  connectable</text>
+      <text class="tiny label" x="8" y="147">Seen 1s  connectable  Passive</text>
 
       <rect x="8" y="152" width="304" height="14" fill="none" stroke="#4b5562" stroke-width="1"/>
       <polyline points="36,162 70,158 104,161 138,154 172,156 206,153 240,155 278,151 306,153" fill="none" stroke="#45d66e" stroke-width="2"/>
@@ -89,10 +89,10 @@
     <path class="leader" d="M 790 136 C 670 130, 400 132, 112 136"/>
 
     <rect class="calloutBox" x="790" y="182" width="320" height="78"/>
-    <text class="calloutTitle" x="808" y="207">Battery SOC</text>
-    <text class="calloutText" x="808" y="228">AXP2602 reported percentage.</text>
-    <text class="calloutText" x="808" y="247">Shared with the Wi-Fi screen.</text>
-    <path class="leader" d="M 790 222 C 690 204, 470 154, 322 136"/>
+    <text class="calloutTitle" x="808" y="207">Scan Mode</text>
+    <text class="calloutText" x="808" y="228">Shows Passive or Active BLE</text>
+    <text class="calloutText" x="808" y="247">scan mode in green.</text>
+    <path class="leader" d="M 790 222 C 690 204, 530 154, 410 136"/>
 
     <rect class="calloutBox" x="790" y="276" width="320" height="78"/>
     <text class="calloutTitle" x="808" y="301">BLE Count</text>
@@ -125,10 +125,12 @@
     <text class="calloutText" x="88" y="619">the advertiser is connectable.</text>
     <path class="leaderDim" d="M 370 578 C 440 504, 326 380, 106 358"/>
 
-    <rect class="calloutBox" x="405" y="535" width="300" height="86"/>
+    <rect class="calloutBox" x="405" y="535" width="300" height="112"/>
     <text class="calloutTitle" x="423" y="560">Controls</text>
-    <text class="calloutText" x="423" y="581">Upper button selects next device.</text>
-    <text class="calloutText" x="423" y="600">Lower button toggles detail.</text>
+    <text class="calloutText" x="423" y="581">Upper selects next device.</text>
+    <text class="calloutText" x="423" y="600">Lower cycles screen views.</text>
+    <text class="calloutText" x="423" y="619">Tap both: Passive/Active.</text>
+    <text class="calloutText" x="423" y="638">Hold both: WiFi mode.</text>
     <path class="leaderDim" d="M 548 535 C 510 472, 450 288, 110 218"/>
   </g>
   <text x="600" y="700" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="12" fill="#7f8b99">Copyright (c) 2026 Paul Hodara. MIT License.</text>

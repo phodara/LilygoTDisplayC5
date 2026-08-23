@@ -13,8 +13,8 @@
 
 - Main app is a portable WiFi analyzer.
 - It scans nearby WiFi networks and shows SSID, RSSI, channel, security, channel load, and battery status.
-- The two top buttons are used for previous/next navigation.
-- Both buttons together toggle the MAC/BSSID detail view.
+- The two top buttons are used for selection, view cycling, BLE scan-mode toggling, and WiFi/Bluetooth mode switching.
+- Button command details are documented in `docs/button-commands.md`.
 
 ## Known Pins In This Repo
 
@@ -71,6 +71,7 @@ This is useful for I2C sensors such as BME280, SHT31, BMP280, BH1750, SGP30, SCD
 - Add a UART magnetic stripe reader for safe test-card experiments. Avoid storing or displaying full payment/access card data.
 - Try ESP32 Marauder on the board. ESP32-C5 support exists, but the LilyGO T-Display C5 display/buttons would probably need custom board support for a polished build.
 - Build an IR remote learner/emulator using an IR receiver and IR LED transmitter on spare GPIO pins.
+- Add configurable LCD backlight brightness using the AW9364 1-wire dimming driver on GPIO 25. See `docs/display-power-management.md`.
 
 ## Safety And Wiring Notes
 
