@@ -8,9 +8,6 @@
     <filter id="buttonShadow" x="-25%" y="-25%" width="150%" height="150%">
       <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000000" flood-opacity="0.38"/>
     </filter>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
-      <path d="M 0 0 L 12 6 L 0 12 z" fill="#d7e3f4"/>
-    </marker>
     <style>
       .page { fill: #0f1419; }
       .device { fill: #1c242d; stroke: #46515d; stroke-width: 4; }
@@ -26,8 +23,6 @@
       .sideButtonCore { fill: #ff4b3e; }
       .buttonIcon { fill: #d72f2f; stroke: #ffb3a8; stroke-width: 3; }
       .buttonIconCore { fill: #ff4b3e; }
-      .leader { stroke: #d7e3f4; stroke-width: 3; fill: none; marker-end: url(#arrow); }
-      .leaderDim { stroke: #9fb0c4; stroke-width: 2; fill: none; marker-end: url(#arrow); }
       .title { font-family: Inter, Arial, sans-serif; font-size: 42px; font-weight: 800; fill: #ffffff; }
       .subtitle { font-family: Inter, Arial, sans-serif; font-size: 19px; fill: #aeb9c7; }
       .sectionTitle { font-family: Inter, Arial, sans-serif; font-size: 22px; font-weight: 800; fill: #ffffff; }
@@ -47,119 +42,78 @@
 
   <rect class="page" width="1400" height="900"/>
 
-  <text class="title" x="700" y="72" text-anchor="middle">Button Functions</text>
-  <text class="subtitle" x="700" y="106" text-anchor="middle">LilyGO T-Display C5 firmware v2.1.0</text>
+  <text class="title" x="700" y="72" text-anchor="middle">New Button Functions</text>
+  <text class="subtitle" x="700" y="106" text-anchor="middle">PocketProwler(R) LilyGO t-Display C5 firmware v2.1.0</text>
 
-  <g id="device" filter="url(#softShadow)">
-    <rect class="device" x="86" y="176" width="620" height="420" rx="34"/>
-    <rect class="screen" x="118" y="215" width="556" height="314" rx="14"/>
-    <line class="bezelLine" x1="170" y1="552" x2="622" y2="552"/>
+  <g id="wifi-column" filter="url(#softShadow)">
+    <rect class="modeWifi" x="90" y="150" width="590" height="92"/>
+    <text class="sectionTitle" x="118" y="186">WiFi Screen</text>
+    <text class="body" x="118" y="216">Upper selects APs. Lower cycles RSSI, BSSID detail, and full AP list.</text>
 
-    <g id="upper-button" filter="url(#buttonShadow)">
-      <circle class="sideButton" cx="723" cy="272" r="24"/>
-      <circle class="sideButtonCore" cx="723" cy="272" r="14"/>
-      <text class="small" x="723" y="226" text-anchor="middle">Upper</text>
-      <text class="small muted" x="723" y="246" text-anchor="middle">GPIO28</text>
-    </g>
-    <g id="lower-button" filter="url(#buttonShadow)">
-      <circle class="sideButton" cx="723" cy="386" r="24"/>
-      <circle class="sideButtonCore" cx="723" cy="386" r="14"/>
-      <text class="small" x="723" y="440" text-anchor="middle">Lower</text>
-      <text class="small muted" x="723" y="460" text-anchor="middle">GPIO0</text>
-    </g>
+    <rect class="panel" x="90" y="272" width="590" height="104"/>
+    <circle class="buttonIcon" cx="140" cy="318" r="19"/>
+    <circle class="buttonIconCore" cx="140" cy="318" r="10"/>
+    <text class="label" x="178" y="313">Tap Upper</text>
+    <text class="body" x="178" y="341">Selects the next access point.</text>
 
-    <g transform="translate(118 215) scale(1.7375)">
-      <rect width="320" height="181" fill="#000000"/>
-      <rect class="header" x="0" y="0" width="320" height="28"/>
-      <text class="monoSmall" x="8" y="18">Wifi</text>
-      <text class="monoSmall green" x="126" y="18">BAT 62%</text>
-      <text class="monoSmall cyan" x="312" y="18" text-anchor="end">13 APs 1/13</text>
+    <rect class="panel" x="90" y="400" width="590" height="118"/>
+    <circle class="buttonIcon" cx="140" cy="449" r="19"/>
+    <circle class="buttonIconCore" cx="140" cy="449" r="10"/>
+    <text class="label" x="178" y="444">Tap Lower</text>
+    <text class="body" x="178" y="472">Cycles WiFi screen views.</text>
+    <text class="small" x="178" y="496">RSSI history -> BSSID detail -> full AP list</text>
 
-      <text class="monoSmall muted" x="8" y="43">SSID</text>
-      <text class="monoSmall muted" x="140" y="43">Signal</text>
-      <text class="monoSmall muted" x="232" y="43" text-anchor="end">dBm</text>
-      <text class="monoSmall muted" x="266" y="43" text-anchor="end">Ch</text>
-      <text class="monoSmall muted" x="312" y="43" text-anchor="end">Band</text>
-
-      <rect class="selected" x="0" y="32" width="320" height="21"/>
-      <text class="monoSmall" x="8" y="48">MeshNet</text>
-      <rect x="140" y="38" width="52" height="9" fill="none" stroke="#4b5562" stroke-width="1"/>
-      <rect x="141" y="39" width="38" height="7" fill="#45d66e"/>
-      <text class="monoSmall green" x="232" y="48" text-anchor="end">-50</text>
-      <text class="monoSmall" x="266" y="48" text-anchor="end">149</text>
-      <text class="monoSmall" x="312" y="48" text-anchor="end">5G</text>
-
-      <text class="monoSmall" x="8" y="70">Lab-IoT</text>
-      <rect x="140" y="60" width="52" height="9" fill="none" stroke="#4b5562" stroke-width="1"/>
-      <rect x="141" y="61" width="25" height="7" fill="#ffe66b"/>
-      <text class="monoSmall yellow" x="232" y="70" text-anchor="end">-68</text>
-      <text class="monoSmall" x="266" y="70" text-anchor="end">6</text>
-      <text class="monoSmall" x="312" y="70" text-anchor="end">2.4G</text>
-
-      <line x1="0" y1="80" x2="320" y2="80" stroke="#4b5562" stroke-width="2"/>
-      <text class="monoSmall" x="8" y="100">MeshNet</text>
-      <text class="monoSmall cyan" x="312" y="100" text-anchor="end">1/13</text>
-      <text class="monoSmall" x="8" y="116">RSSI -50 dBm 75%</text>
-      <text class="monoSmall" x="8" y="132">5G ch 149 WPA2/3 BSSIDs 1 3.99V</text>
-      <rect x="8" y="138" width="304" height="36" fill="none" stroke="#4b5562" stroke-width="1"/>
-      <polyline points="34,166 70,156 108,158 146,149 184,151 224,144 262,147 306,140" fill="none" stroke="#45d66e" stroke-width="2"/>
-    </g>
+    <rect class="panel" x="90" y="678" width="590" height="112"/>
+    <circle class="buttonIcon" cx="126" cy="726" r="17"/>
+    <circle class="buttonIconCore" cx="126" cy="726" r="8"/>
+    <circle class="buttonIcon" cx="160" cy="726" r="17"/>
+    <circle class="buttonIconCore" cx="160" cy="726" r="8"/>
+    <text class="label" x="198" y="722">Hold Both</text>
+    <text class="body" x="198" y="750">Switches to Bluetooth mode.</text>
+    <text class="small" x="198" y="774">Hold threshold: about 700 ms</text>
   </g>
 
-  <g id="actions">
-    <rect class="panel" x="770" y="170" width="530" height="128"/>
-    <circle class="buttonIcon" cx="816" cy="215" r="19"/>
-    <circle class="buttonIconCore" cx="816" cy="215" r="10"/>
-    <text class="label" x="850" y="211">Tap Upper</text>
-    <text class="body" x="850" y="238">Selects the next item in the current scan list.</text>
-    <text class="small" x="850" y="264">WiFi: next access point   Bluetooth: next BLE device</text>
-    <path class="leader" d="M 770 218 C 742 224, 730 246, 723 272"/>
+  <g id="bluetooth-column" filter="url(#softShadow)">
+    <rect class="modeBle" x="720" y="150" width="590" height="92"/>
+    <text class="sectionTitle" x="748" y="186">Bluetooth Screen</text>
+    <text class="body" x="748" y="216">Upper selects devices. Lower cycles RSSI, address detail, and full BLE list.</text>
 
-    <rect class="panel" x="770" y="322" width="530" height="142"/>
-    <circle class="buttonIcon" cx="816" cy="369" r="19"/>
-    <circle class="buttonIconCore" cx="816" cy="369" r="10"/>
-    <text class="label" x="850" y="365">Tap Lower</text>
-    <text class="body" x="850" y="392">Cycles through the three screen views.</text>
-    <text class="small" x="850" y="420">RSSI history  ->  detail panel  ->  full list</text>
-    <path class="leader" d="M 770 372 C 748 372, 736 380, 723 386"/>
+    <rect class="panel" x="720" y="272" width="590" height="104"/>
+    <circle class="buttonIcon" cx="770" cy="318" r="19"/>
+    <circle class="buttonIconCore" cx="770" cy="318" r="10"/>
+    <text class="label" x="808" y="313">Tap Upper</text>
+    <text class="body" x="808" y="341">Selects the next BLE device.</text>
 
-    <rect class="panel" x="770" y="488" width="530" height="132"/>
-    <circle class="buttonIcon" cx="802" cy="535" r="17"/>
-    <circle class="buttonIconCore" cx="802" cy="535" r="8"/>
-    <circle class="buttonIcon" cx="834" cy="535" r="17"/>
-    <circle class="buttonIconCore" cx="834" cy="535" r="8"/>
-    <text class="label" x="870" y="531">Tap Both</text>
-    <text class="body" x="870" y="558">Bluetooth only: toggles BLE scan mode.</text>
-    <text class="small" x="870" y="584">Passive listens. Active requests scan-response names.</text>
-    <path class="leaderDim" d="M 770 540 C 716 510, 716 438, 723 386"/>
-    <path class="leaderDim" d="M 770 522 C 716 480, 716 326, 723 272"/>
+    <rect class="panel" x="720" y="400" width="590" height="118"/>
+    <circle class="buttonIcon" cx="770" cy="449" r="19"/>
+    <circle class="buttonIconCore" cx="770" cy="449" r="10"/>
+    <text class="label" x="808" y="444">Tap Lower</text>
+    <text class="body" x="808" y="472">Cycles Bluetooth screen views.</text>
+    <text class="small" x="808" y="496">RSSI history -> address detail -> full BLE list</text>
 
-    <rect class="panel" x="770" y="644" width="530" height="124"/>
-    <circle class="buttonIcon" cx="802" cy="705" r="17"/>
-    <circle class="buttonIconCore" cx="802" cy="705" r="8"/>
-    <circle class="buttonIcon" cx="834" cy="705" r="17"/>
-    <circle class="buttonIconCore" cx="834" cy="705" r="8"/>
-    <text class="label" x="870" y="695">Hold Both</text>
-    <text class="body" x="870" y="722">Switches between WiFi and Bluetooth screens.</text>
-    <text class="small" x="870" y="748">Hold threshold: about 700 ms</text>
-    <path class="leaderDim" d="M 770 705 C 690 652, 710 466, 723 386"/>
-    <path class="leaderDim" d="M 770 688 C 690 620, 708 360, 723 272"/>
-  </g>
+    <rect class="panel" x="720" y="542" width="590" height="112"/>
+    <circle class="buttonIcon" cx="756" cy="590" r="17"/>
+    <circle class="buttonIconCore" cx="756" cy="590" r="8"/>
+    <circle class="buttonIcon" cx="790" cy="590" r="17"/>
+    <circle class="buttonIconCore" cx="790" cy="590" r="8"/>
+    <text class="label" x="828" y="586">Tap Both</text>
+    <text class="body" x="828" y="614">Toggles passive and active BLE scanning.</text>
+    <text class="small" x="828" y="638">Active scan can reveal extra device names.</text>
 
-  <g id="mode-summary">
-    <rect class="modeWifi" x="118" y="650" width="556" height="84"/>
-    <text class="sectionTitle" x="142" y="683">WiFi Screen</text>
-    <text class="body" x="142" y="713">Upper selects APs. Lower cycles RSSI, BSSID detail, and full AP list.</text>
-
-    <rect class="modeBle" x="118" y="752" width="556" height="84"/>
-    <text class="sectionTitle" x="142" y="785">Bluetooth Screen</text>
-    <text class="body" x="142" y="815">Upper selects devices. Lower cycles RSSI, address detail, and full BLE list.</text>
+    <rect class="panel" x="720" y="678" width="590" height="112"/>
+    <circle class="buttonIcon" cx="756" cy="726" r="17"/>
+    <circle class="buttonIconCore" cx="756" cy="726" r="8"/>
+    <circle class="buttonIcon" cx="790" cy="726" r="17"/>
+    <circle class="buttonIconCore" cx="790" cy="726" r="8"/>
+    <text class="label" x="828" y="722">Hold Both</text>
+    <text class="body" x="828" y="750">Switches back to WiFi mode.</text>
+    <text class="small" x="828" y="774">Hold threshold: about 700 ms</text>
   </g>
 
   <g id="timing-strip">
-    <rect x="770" y="796" width="530" height="40" rx="8" fill="#101820" stroke="#394553" stroke-width="1.5"/>
-    <text class="small" x="794" y="821">Debounce: about 220 ms</text>
-    <text class="small" x="1058" y="821">Both-button hold: about 700 ms</text>
+    <rect x="405" y="812" width="590" height="40" rx="8" fill="#101820" stroke="#394553" stroke-width="1.5"/>
+    <text class="small" x="445" y="837">Debounce: about 220 ms</text>
+    <text class="small" x="700" y="837">Both-button hold: about 700 ms</text>
   </g>
 
   <text class="footer" x="700" y="872" text-anchor="middle">Copyright (c) 2026 Paul Hodara. MIT License.</text>
