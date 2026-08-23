@@ -109,12 +109,16 @@ static constexpr uint32_t BLE_SCAN_INTERVAL_MS = 5000;
 static constexpr uint32_t BLE_SCAN_DURATION_MS = 3000;
 static constexpr uint32_t BLE_STALE_MS = 60000;
 static constexpr uint32_t BLE_HISTORY_INTERVAL_MS = 700;
+static constexpr uint32_t BOOT_SCREEN_MS = 3000;
 static constexpr uint32_t BUTTON_DEBOUNCE_MS = 220;
 static constexpr uint32_t MODE_HOLD_MS = 700;
 static constexpr uint32_t BATTERY_INTERVAL_MS = 5000;
 static constexpr int HEADER_WIFI_SCAN_X = 70;
 static constexpr int HEADER_WIFI_BATTERY_X = 126;
 static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
+static constexpr const char *APP_NAME = "PocketProwler";
+static constexpr const char *APP_VERSION = "2.1.0";
+static constexpr const char *APP_COPYRIGHT = "Copyright (c) 2026 Paul Hodara";
 
 static NetworkInfo networks[MAX_NETWORKS];
 static BleDeviceInfo bleDevices[MAX_BLE_DEVICES];
@@ -155,6 +159,7 @@ static int batteryPercent = -1;
 static bool batteryCharging = false;
 
 void drawAnalyzer();
+void drawBootScreen();
 void drawCurrentScreen();
 void drawCurrentHeader();
 void drawCurrentBody();
@@ -668,7 +673,7 @@ void drawDetails()
     const int x1 = plotX + (i * (plotW - 1)) / max(1, samples - 1);
     const int y0 = graphYForRssi(rssiHistory[start + i - 1], plotTop, plotH);
     const int y1 = graphYForRssi(rssiHistory[start + i], plotTop, plotH);
-    tft.drawLine(x0, y0, x1, y1, TFT_GREEN);
+    tft.drawLine(x0, y0, x1, y1, rssiColor(rssiHistory[start + i]));
   }
 }
 
@@ -735,6 +740,59 @@ void drawAnalyzer()
 {
   drawHeader();
   drawWifiBody();
+}
+
+void drawBootScreen()
+{
+  tft.startWrite();
+  tft.fillScreen(TFT_BLACK);
+
+  const int w = tft.width();
+  const int h = tft.height();
+  const uint16_t bands[] = {TFT_NAVY, TFT_BLUE, TFT_DARKCYAN, TFT_GREEN, TFT_YELLOW, TFT_ORANGE, TFT_RED};
+  const int bandCount = sizeof(bands) / sizeof(bands[0]);
+  const int bandH = max(1, h / bandCount);
+  for (int i = 0; i < bandCount; i++) {
+    tft.fillRect(0, i * bandH, w, bandH + 1, bands[i]);
+  }
+
+  tft.fillRect(18, 22, w - 36, h - 44, TFT_BLACK);
+  tft.drawRect(18, 22, w - 36, h - 44, TFT_CYAN);
+  tft.drawRect(22, 26, w - 44, h - 52, TFT_DARKGREY);
+
+  const int centerX = w / 2;
+  for (int i = 0; i < 5; i++) {
+    const int barH = 10 + (i * 8);
+    const uint16_t color = i < 2 ? TFT_RED : (i < 4 ? TFT_YELLOW : TFT_GREEN);
+    tft.fillRect(36 + (i * 13), 118 - barH, 8, barH, color);
+  }
+  for (int i = 0; i < 5; i++) {
+    const int barH = 10 + (i * 8);
+    const uint16_t color = i < 2 ? TFT_RED : (i < 4 ? TFT_YELLOW : TFT_GREEN);
+    tft.fillRect(w - 44 - (i * 13), 118 - barH, 8, barH, color);
+  }
+
+  tft.setTextDatum(textdatum_t::middle_center);
+  tft.setTextColor(TFT_WHITE, TFT_BLACK);
+  tft.setFont(&fonts::Font4);
+  tft.drawString(APP_NAME, centerX, 58);
+
+  const int appNameW = tft.textWidth(APP_NAME);
+  const int markX = centerX + (appNameW / 2) + 9;
+  const int markY = 45;
+  tft.drawCircle(markX, markY, 7, TFT_WHITE);
+  tft.setFont(&fonts::Font0);
+  tft.drawString("R", markX + 1, markY);
+
+  tft.setFont(&fonts::Font2);
+  tft.setTextColor(TFT_CYAN, TFT_BLACK);
+  tft.drawString(String("Version ") + APP_VERSION, centerX, 92);
+
+  tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+  tft.drawString(APP_COPYRIGHT, centerX, 126);
+
+  tft.setTextDatum(textdatum_t::top_left);
+  tft.endWrite();
 }
 
 void drawBleRow(int row, int deviceIndex, int startY = 34, int rowHeight = 20)
@@ -833,7 +891,7 @@ void drawBleDetails(int panelY)
     const int x1 = plotX + (i * (plotW - 1)) / max(1, bleHistoryCount - 1);
     const int y0 = graphYForRssi(bleRssiHistory[i - 1], plotTop, plotH);
     const int y1 = graphYForRssi(bleRssiHistory[i], plotTop, plotH);
-    tft.drawLine(x0, y0, x1, y1, TFT_GREEN);
+    tft.drawLine(x0, y0, x1, y1, rssiColor(bleRssiHistory[i]));
   }
 }
 
@@ -1326,6 +1384,8 @@ void setup()
   tft.setTextSize(1);
   tft.setFont(&fonts::Font2);
   tft.setTextDatum(textdatum_t::top_left);
+  drawBootScreen();
+  delay(BOOT_SCREEN_MS);
 
   WiFi.mode(WIFI_STA);
   WiFi.disconnect();
