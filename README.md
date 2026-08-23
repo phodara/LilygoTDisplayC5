@@ -2,7 +2,7 @@
 
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
-# LilyGO T-Display C5 WiFi Analyzer
+# LilyGO T-Display C5 WiFi Scanner
 
 PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 <p align="center">
@@ -19,6 +19,7 @@ PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 - Initializes the ST7789 display through `LovyanGFX`.
 - Starts I2C on the board pins.
 - Scans nearby WiFi networks every few seconds.
+- Second page Scans nearby Bluetooth devices every few seconds with a passive or active option.
 - Shows SSID, RSSI, signal bar, channel, band, and security.
 - Draws a compact RSSI history graph for the selected access point.
 - Scans Bluetooth Low Energy devices in a separate Bluetooth mode.
