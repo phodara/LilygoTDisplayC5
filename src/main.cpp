@@ -175,7 +175,7 @@ int visibleRowCount()
 
 int detailPanelY()
 {
-  return 36 + (max(1, visibleRowCount()) * 22);
+  return 34 + (max(1, visibleRowCount()) * 22);
 }
 
 bool timeReached(uint32_t deadlineMs)
@@ -933,7 +933,7 @@ void drawBleBody()
   }
 
   const int visibleRows = min(bleDeviceCount, 3);
-  const int panelY = 38 + (max(1, visibleRows) * 20);
+  const int panelY = 36 + (max(1, visibleRows) * 20);
   tft.fillRect(0, 28, tft.width(), panelY - 28, TFT_BLACK);
 
   tft.setTextColor(TFT_DARKGREY, TFT_BLACK);

@@ -72,6 +72,7 @@ This is useful for I2C sensors such as BME280, SHT31, BMP280, BH1750, SGP30, SCD
 - Try ESP32 Marauder on the board. ESP32-C5 support exists, but the LilyGO T-Display C5 display/buttons would probably need custom board support for a polished build.
 - Build an IR remote learner/emulator using an IR receiver and IR LED transmitter on spare GPIO pins.
 - Add configurable LCD backlight brightness using the AW9364 1-wire dimming driver on GPIO 25. See `docs/display-power-management.md`.
+- Store WiFi and Bluetooth scan data and export it to an iPhone, likely through a chunked BLE service. See `docs/scan-data-export.md`.
 
 ## Safety And Wiring Notes
 
