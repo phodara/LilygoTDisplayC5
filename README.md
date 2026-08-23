@@ -4,7 +4,7 @@
 
 # LilyGO T-Display C5 WiFi Analyzer
 
-PlatformIO WiFi analyzer for the LilyGO T-Display C5.
+PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 <p align="center">
   <img src="https://github.com/user-attachments/assets/04c630fe-b077-48b6-a377-c4726b4ede97" width="400" alt="LilyGO T-Display C5 WiFi Analyzer">
 
