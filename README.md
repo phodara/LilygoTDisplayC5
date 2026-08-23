@@ -2,7 +2,7 @@
 
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
-# LilyGO T-Display C5 WiFi Scanner
+# LilyGO T-Display C5 WiFi and Bluetooth (as of v2.1) Scanner
 
 PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 <p align="center">
