@@ -36,16 +36,7 @@ Passive WiFi scans can see RSSI, channel, band, security, and the number of BSSI
 
 ## Button Controls
 
-| Control | WiFi mode | Bluetooth mode |
-| --- | --- | --- |
-| Upper button | Select next access point | Select next BLE device |
-| Lower button | Cycle RSSI history / BSSID detail / full AP list | Cycle RSSI history / address detail / full device list |
-| Both buttons tapped | No action | Toggle passive/active BLE scan |
-| Both buttons held | Switch to Bluetooth mode | Switch to WiFi mode |
-
-The selected item wraps around when it reaches the end of the list. The both-button mode switch uses a short hold to avoid accidental mode changes while scrolling.
-
-## Version 2 Improvements
+## Version 2.1 Improvements
 
 Version 2 adds a practical Bluetooth scanner mode and display redraw improvements:
 
@@ -55,6 +46,9 @@ Version 2 adds a practical Bluetooth scanner mode and display redraw improvement
 - BLE entries remain visible for 60 seconds after last seen, which helps with low-power devices that advertise intermittently.
 - Named BLE devices are de-duplicated when they appear with changing private addresses.
 - Display flicker is reduced by avoiding full-screen clears during routine updates.
+
+### Button Controls
+![New Button Functions](https://raw.githubusercontent.com/phodara/LilygoTDisplayC5/42b126e/docs/release-assets/button-functions-release-graphic.svg)
 
 ## Feature Notes
 
