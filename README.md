@@ -6,7 +6,10 @@
 
 PlatformIO WiFi analyzer for the LilyGO T-Display C5.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/04c630fe-b077-48b6-a377-c4726b4ede97" width="250" alt="LilyGO T-Display C5 WiFi Analyzer">
+  <img src="https://github.com/user-attachments/assets/04c630fe-b077-48b6-a377-c4726b4ede97" width="300" alt="LilyGO T-Display C5 WiFi Analyzer">
+
+<img width="300"   alt="LilyGO T-Display C5 Bluetooth scanner screen" src="https://github.com/user-attachments/assets/42a68532-da60-4bc8-871d-a1899c498f78" />
+
 </p>
 
 ## What It Does
