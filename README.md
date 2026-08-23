@@ -34,7 +34,6 @@ PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 
 Passive WiFi scans can see RSSI, channel, band, security, and the number of BSSIDs sharing a channel, but they do not reliably expose internet throughput or AP channel width. The display therefore shows same-channel BSSID count as the practical crowding indicator and marks raw scan bandwidth as `n/a`.
 
-## Button Controls
 
 ## Version 2.1 Improvements
 
