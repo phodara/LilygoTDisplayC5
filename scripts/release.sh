@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <version>"
-  echo "Example: $0 v2.2.0"
+if [[ $# -lt 2 ]]; then
+  echo "Usage: $0 <version> <commit message>"
+  echo "Example: $0 v2.2.0 \"Release v2.2.0 display and BLE data refinements\""
   exit 1
 fi
 
 version="$1"
-message="Release $version"
+shift
+message="$*"
 
 if [[ ! "$version" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
   echo "Version must look like v2.0.1"
@@ -39,6 +40,6 @@ if git diff --cached --quiet; then
 fi
 
 git commit -m "$message"
-git tag -a "$version" -m "$message"
+git tag -a "$version" -m "Version ${version#v}: $message"
 git push origin main
 git push origin "$version"
