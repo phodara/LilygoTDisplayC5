@@ -54,6 +54,7 @@ Version 2 adds a practical Bluetooth scanner mode and display redraw improvement
 - [Changelog](CHANGELOG.md)
 - [Bluetooth feature plan](docs/bluetooth-feature.md)
 - [Bluetooth scanner feature plan](docs/bluetooth-scanner.md)
+- [Battery recommendations](docs/battery-recommendations.md)
 - [Button commands](docs/button-commands.md)
 - [Display flicker fix](docs/display-flicker-fix.md)
 - [Display power management](docs/display-power-management.md)
