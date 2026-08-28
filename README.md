@@ -130,10 +130,10 @@ pio device monitor
 After updating code and documentation for a new version, the reusable release helper can commit, tag, and push the staged release files:
 
 ```sh
-./scripts/release.sh v2.2.0 "Release v2.2.0 display and BLE data refinements"
+./scripts/release.sh v2.2.0
 ```
 
-The script expects a semantic version tag such as `v2.2.0`. Edit `scripts/release.sh` if a future release needs to include different files.
+The script expects a semantic version tag such as `v2.2.0`, then uses `Release v2.2.0` as the commit and tag message. Edit `scripts/release.sh` if a future release needs to include different files.
 
 ## License
 
