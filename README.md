@@ -2,12 +2,11 @@
 
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
-# Pocketprowler - LilyGO T-Display C5 WiFi and Bluetooth Scanner
+# PocketProwler - LilyGO T-Display C5 WiFi and Bluetooth Scanner
 A portable WiFi + BLE analyzer for the LilyGO T-Display C5.
 
 PocketProwler turns the LilyGO T-Display C5 (ESP32-C5) into a self-contained handheld scanner. Scan nearby WiFi networks and Bluetooth LE devices, drill into per-device detail views, and run for hours on an internal LiPo battery — all inside a 3D-printed case.
 
-PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 <p align="center">
   <img src="docs/release-assets/v2.2.0-wifi-screen-blurred.jpg" width="400" alt="LilyGO T-Display C5 WiFi scanner screen">
 
