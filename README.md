@@ -26,10 +26,6 @@ bill of materials with wiring and assembly instructions.
 
 ## What It Does
 
-- Initializes Serial over USB CDC at `115200`.
-- Turns on the LCD backlight.
-- Initializes the ST7789 display through `LovyanGFX`.
-- Starts I2C on the board pins.
 - Scans nearby WiFi networks every few seconds.
 - Scans nearby Bluetooth devices in a separate screen with passive and active options.
 - Shows SSID, RSSI, signal bar, channel, band, and security.
