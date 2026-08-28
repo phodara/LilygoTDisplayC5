@@ -12,6 +12,16 @@ PocketProwler turns the LilyGO T-Display C5 (ESP32-C5) into a self-contained han
 
   <img src="docs/release-assets/v2.2.0-ble-screen-blurred.jpg" width="400" alt="LilyGO T-Display C5 BLE scanner manufacturer data screen">
 
+## 3D-Printed Case
+
+A purpose-built enclosure for PocketProwler — with an internal 3000mAh LiPo,
+hardware power switch, and printed button caps — is available on MakerWorld:
+
+**[LilyGO T-Display C5 Case + LiPo →](https://makerworld.com/en/models/3219883-lilygo-t-display-c5-case-lipo)**
+
+The download includes a Bambu Studio 3MF profile, individual STLs, and a PDF
+bill of materials with wiring and assembly instructions.
+
 </p>
 
 ## What It Does
