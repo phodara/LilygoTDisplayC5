@@ -1,0 +1,702 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PocketProwler Instruction Manual</title>
+  <link rel="icon" type="image/png" href="release-assets/vidiotbox-faces/happy.png">
+  <style>
+    :root {
+      --ink: #080808;
+      --paper: #f6f3ea;
+      --panel: #ffffff;
+      --muted: #56564f;
+      --yellow: #fff200;
+      --cyan: #00d7ff;
+      --red: #ff2a2a;
+      --green: #00d46a;
+      --blue: #234cff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      min-height: 100%;
+      background: #d8d4c8;
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      line-height: 1.36;
+    }
+
+    body {
+      margin: 0 auto;
+      width: 100%;
+      max-width: 1120px;
+      min-height: 100vh;
+      background:
+        linear-gradient(90deg, rgba(0, 0, 0, 0.045) 1px, transparent 1px) 0 0 / 40px 40px,
+        linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px) 0 0 / 40px 40px,
+        var(--paper);
+    }
+
+    img { max-width: 100%; height: auto; }
+    a { color: inherit; font-weight: 900; }
+
+    .page { padding: 32px 32px 128px; }
+
+    .masthead {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      min-height: 430px;
+      border: 4px solid var(--ink);
+      background: var(--panel);
+    }
+
+    .mast-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 30px;
+      border-right: 4px solid var(--ink);
+    }
+
+    .kicker {
+      display: inline-block;
+      width: max-content;
+      padding: 4px 9px;
+      border: 3px solid var(--ink);
+      background: var(--yellow);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 22px 0 10px;
+      max-width: 100%;
+      font-size: clamp(34px, 5.4vw, 62px);
+      line-height: 0.96;
+      font-weight: 950;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 38px;
+      line-height: 0.94;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    p { margin: 0 0 14px; }
+
+    .subtitle {
+      max-width: 560px;
+      font-size: 22px;
+      font-weight: 850;
+    }
+
+    .credit {
+      display: grid;
+      gap: 5px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .mast-art {
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, var(--cyan), transparent 38%),
+        linear-gradient(315deg, var(--yellow), transparent 44%),
+        #111111;
+    }
+
+    .mast-art img {
+      width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(10px 10px 0 rgba(0, 0, 0, 0.35));
+    }
+
+    .mast-art .cover-face {
+      width: min(82%, 340px);
+      max-height: 390px;
+    }
+
+    .strip {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 3px;
+      margin: 22px 0;
+      border: 3px solid var(--ink);
+      background: var(--ink);
+    }
+
+    .strip span {
+      padding: 9px 7px;
+      background: var(--yellow);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .section {
+      display: grid;
+      grid-template-columns: 132px 1fr;
+      gap: 22px;
+      margin-top: 32px;
+      padding-top: 16px;
+      border-top: 6px solid var(--ink);
+    }
+
+    .num {
+      min-height: 120px;
+      border-right: 4px solid var(--ink);
+      font-size: 84px;
+      line-height: 0.85;
+      font-weight: 950;
+    }
+
+    .deck {
+      max-width: 780px;
+      margin-bottom: 16px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .card,
+    .callout,
+    .face-note,
+    table,
+    .screen-frame {
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    .card { padding: 16px; }
+
+    .callout {
+      padding: 16px;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .callout.yellow { background: var(--yellow); }
+    .callout.cyan { background: var(--cyan); }
+    .callout.green { background: var(--green); }
+    .callout.red { background: var(--red); color: #ffffff; }
+
+    .face-note {
+      display: grid;
+      grid-template-columns: 78px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px;
+      margin: 10px 0 18px;
+      font-weight: 800;
+    }
+
+    .face-note img {
+      width: 70px;
+      object-fit: contain;
+    }
+
+    .screen-frame {
+      padding: 10px;
+      margin-bottom: 14px;
+      background: #ffffff;
+    }
+
+    .screen-frame img {
+      display: block;
+      width: 100%;
+      border: 2px solid var(--ink);
+    }
+
+    .case-download {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-top: 18px;
+      padding: 16px;
+      background: var(--yellow);
+      border: 4px solid var(--ink);
+      box-shadow: 10px 10px 0 var(--ink);
+    }
+
+    .case-download img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 240px;
+      object-fit: cover;
+      border: 3px solid var(--ink);
+      background: var(--panel);
+    }
+
+    .case-download-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .case-download-copy h3 {
+      margin-bottom: 12px;
+      font-size: 28px;
+    }
+
+    .case-links {
+      display: grid;
+      gap: 8px;
+    }
+
+    .case-links a {
+      display: block;
+      padding: 12px 14px;
+      background: var(--panel);
+      border: 3px solid var(--ink);
+      color: var(--ink);
+      font-size: 14px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-align: center;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .case-links a:hover,
+    .case-links a:focus {
+      background: var(--cyan);
+      outline: none;
+    }
+
+    table {
+      width: 100%;
+      margin: 10px 0 18px;
+      border-collapse: collapse;
+      box-shadow: none;
+    }
+
+    th,
+    td {
+      padding: 8px 9px;
+      border: 2px solid var(--ink);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--ink);
+      color: #ffffff;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    td strong { font-weight: 950; }
+
+    code,
+    pre {
+      background: var(--ink);
+      color: var(--yellow);
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+
+    code {
+      padding: 1px 4px;
+      font-size: 0.92em;
+    }
+
+    pre {
+      margin: 0;
+      padding: 14px;
+      border: 3px solid var(--ink);
+      overflow: auto;
+    }
+
+    .footer {
+      margin-top: 34px;
+      padding: 18px;
+      background: var(--ink);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: 0.04em;
+    }
+
+    .end-marker {
+      margin-top: 28px;
+      padding: 18px;
+      border: 4px solid var(--ink);
+      background: var(--yellow);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 8px 8px 0 var(--ink);
+    }
+
+    @media print {
+      html { background: #ffffff; }
+      body { max-width: none; }
+      .page { padding: 18mm; }
+      .section { break-inside: avoid; page-break-inside: avoid; }
+      .masthead,
+      .card,
+      .callout,
+      .face-note,
+      table,
+      .screen-frame,
+      .end-marker {
+        box-shadow: none;
+      }
+      a { color: inherit; text-decoration: none; }
+    }
+
+    @media (max-width: 760px) {
+      html,
+      body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .page { padding: 18px 18px 96px; }
+      .masthead,
+      .section,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .mast-copy {
+        border-right: 0;
+        border-bottom: 4px solid var(--ink);
+      }
+
+      .strip { grid-template-columns: repeat(2, 1fr); }
+
+      .num {
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 4px solid var(--ink);
+      }
+
+      .masthead > *,
+      .section > *,
+      .grid-2 > *,
+      .grid-3 > *,
+      .case-download > *,
+      td,
+      th,
+      .subtitle,
+      .deck,
+      .callout {
+        min-width: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .case-download {
+        grid-template-columns: 1fr;
+      }
+
+      .case-download img {
+        height: auto;
+        min-height: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="mast-copy">
+        <div>
+          <span class="kicker">Field Manual / T-Display C5 Edition</span>
+          <h1>Pocket<br>Prowler</h1>
+          <p class="subtitle">A pocket WiFi and Bluetooth scanner for seeing the radio chatter around you.</p>
+        </div>
+        <div class="credit">
+          <span>LilyGO T-Display C5 firmware by Paul Hodara</span>
+        </div>
+      </div>
+      <div class="mast-art" aria-label="PocketProwler field guide character">
+        <img class="cover-face" src="release-assets/vidiotbox-faces/proudprowler.jpg" alt="Proud PocketProwler face">
+      </div>
+    </header>
+
+    <div class="strip" aria-label="Manual contents">
+      <span>Flash</span>
+      <span>WiFi</span>
+      <span>BLE</span>
+      <span>Buttons</span>
+      <span>Battery</span>
+      <span>Serial</span>
+    </div>
+
+    <section class="section">
+      <div class="num">01</div>
+      <div>
+        <h2>What It Is</h2>
+        <p class="deck">PocketProwler turns a LilyGO T-Display C5 into a handheld WiFi and BLE field scanner with a built-in screen, two top buttons, and battery readout.</p>
+        <div class="grid-2">
+          <div class="screen-frame">
+            <img src="release-assets/v2.2.0-wifi-screen-blurred.jpg" alt="PocketProwler WiFi scanner screen">
+          </div>
+          <div class="screen-frame">
+            <img src="release-assets/v2.2.0-ble-screen-blurred.jpg" alt="PocketProwler BLE scanner screen">
+          </div>
+        </div>
+        <div class="grid-3">
+          <div class="callout yellow">WiFi view shows SSID, RSSI, channel, band, security, and crowding hints.</div>
+          <div class="callout green">Battery voltage and percentage stay visible in the WiFi view header for field checks.</div>
+          <div class="callout cyan">BLE view shows nearby advertisements, names when available, signal, address details, and manufacturer data.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">02</div>
+      <div>
+        <h2>Install Firmware</h2>
+        <p class="deck">The easiest path is the release image. It includes the bootloader, partition table, and app, so fresh installs and updates both flash at offset <code>0x0</code>.</p>
+        <div class="grid-2">
+          <div class="card">
+            <h3>No-build flashing</h3>
+            <pre>pip install --upgrade esptool
+esptool.py --chip esp32c5 --port /dev/ttyACM0 write_flash 0x0 firmware.factory.bin</pre>
+          </div>
+          <table>
+            <thead><tr><th>Step</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Download <code>firmware.factory.bin</code> from the latest GitHub release.</td></tr>
+              <tr><td>2</td><td>Connect the LilyGO T-Display C5 with USB-C.</td></tr>
+              <tr><td>3</td><td>Run the flash command using your serial port. On Windows it may look like <code>COM5</code>.</td></tr>
+              <tr><td>4</td><td>If upload does not start, hold <strong>BOOT</strong>, tap <strong>RST</strong>, release <strong>RST</strong>, then release <strong>BOOT</strong>.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="face-note">
+          <img src="release-assets/vidiotbox-faces/neutral.png" alt="Neutral guide face">
+          <p>For development builds, use <code>pio run</code>, <code>pio run --target upload</code>, and <code>pio device monitor</code> from the project folder.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">03</div>
+      <div>
+        <h2>Button Map</h2>
+        <p class="deck">Two top buttons control everything. The selected row wraps back to the first item when you reach the end of a list.</p>
+        <div class="screen-frame">
+          <img src="release-assets/button-functions-release-graphic.svg" alt="PocketProwler button function diagram">
+        </div>
+        <table>
+          <thead><tr><th>Control</th><th>WiFi Mode</th><th>BLE Mode</th></tr></thead>
+          <tbody>
+            <tr><td>Tap upper</td><td>Select next access point</td><td>Select next BLE device</td></tr>
+            <tr><td>Tap lower</td><td>Cycle RSSI history, BSSID detail, and full AP list</td><td>Cycle RSSI history, address detail, manufacturer data, and full BLE list</td></tr>
+            <tr><td>Tap both</td><td>No action</td><td>Toggle passive or active BLE scanning</td></tr>
+            <tr><td>Hold both for about 700 ms</td><td>Switch to BLE mode</td><td>Switch to WiFi mode</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">04</div>
+      <div>
+        <h2>WiFi Scan</h2>
+        <p class="deck">WiFi mode is the startup view. It passively scans nearby access points and keeps the screen focused on the strongest and selected networks.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>SSID</td><td>Network name, or a hidden-network marker when the name is not advertised.</td></tr>
+              <tr><td>RSSI</td><td>Signal strength in dBm. Less negative values are stronger.</td></tr>
+              <tr><td>Channel / band</td><td>Radio channel and 2.4 GHz or 5 GHz band when available.</td></tr>
+              <tr><td>Security</td><td>Open, WPA, WPA2, WPA3, or mixed security labels.</td></tr>
+              <tr><td>BSSID count</td><td>Same-channel crowding hint used instead of unreliable raw bandwidth data.</td></tr>
+            </tbody>
+          </table>
+          <div>
+            <div class="callout yellow">Tap lower once for the RSSI graph, again for BSSID detail, and again for the full access-point list.</div>
+            <div class="face-note">
+              <img src="release-assets/vidiotbox-faces/listening.png" alt="Listening guide face">
+              <p>Changing the selected access point clears the old RSSI history so the graph can refill for the new BSSID.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">05</div>
+      <div>
+        <h2>Bluetooth Scan</h2>
+        <p class="deck">BLE mode listens for nearby advertisements from phones, watches, earbuds, sensors, tags, smart-home devices, and other small broadcasters.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Field</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>Name</td><td>Advertised device name, when a device chooses to share one.</td></tr>
+              <tr><td>Address</td><td>BLE address. Some devices rotate this for privacy.</td></tr>
+              <tr><td>Address type</td><td>Public, random, public identity, or random identity.</td></tr>
+              <tr><td>Seen</td><td>Age of the most recent advertisement.</td></tr>
+              <tr><td>Manufacturer data</td><td>Vendor-specific advertisement bytes, shown as a company hint plus length when recognized.</td></tr>
+              <tr><td>Service UUID</td><td>First advertised service UUID, with a count when more are present.</td></tr>
+            </tbody>
+          </table>
+          <div>
+            <div class="callout cyan">Passive scan listens quietly. Active scan asks for scan-response data and may reveal names that passive scan misses.</div>
+            <div class="face-note">
+              <img src="release-assets/vidiotbox-faces/surprised.png" alt="Surprised guide face">
+              <p>BLE devices stay visible for about 60 seconds after their last advertisement, which keeps intermittent devices from flickering away too quickly.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">06</div>
+      <div>
+        <h2>Read Signal</h2>
+        <p class="deck">Signal strength is useful for rough proximity, not exact distance. Walls, antenna orientation, body blocking, and device transmit power all change the reading.</p>
+        <table>
+          <thead><tr><th>RSSI Range</th><th>Field Reading</th><th>Practical Use</th></tr></thead>
+          <tbody>
+            <tr><td>-30 to -50 dBm</td><td>Very strong</td><td>Likely nearby or line-of-sight.</td></tr>
+            <tr><td>-51 to -67 dBm</td><td>Strong</td><td>Good quality signal for most scanning and identification work.</td></tr>
+            <tr><td>-68 to -80 dBm</td><td>Moderate</td><td>Usable, but movement and obstacles may matter.</td></tr>
+            <tr><td>Below -80 dBm</td><td>Weak</td><td>Farther away, blocked, or low-power broadcaster.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout green">Use the RSSI history view when walking around. The trend is often more useful than one instant reading.</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">07</div>
+      <div>
+        <h2>Battery</h2>
+        <p class="deck">PocketProwler reads the AXP2602 PMU for voltage, current, and state of charge. Voltage is the best quick truth check when charging or near full.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Voltage</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td>4.18 V to 4.20 V</td><td>Effectively full.</td></tr>
+              <tr><td>4.16 V to 4.17 V</td><td>Very close to full.</td></tr>
+              <tr><td>4.10 V</td><td>High, but still charging.</td></tr>
+              <tr><td>4.04 V to 4.05 V</td><td>Not full. Try a different cable, charger, or port if it stays here while plugged in.</td></tr>
+              <tr><td>3.40 V to 3.50 V</td><td>Low enough for a battery learning-cycle discharge target.</td></tr>
+            </tbody>
+          </table>
+          <div>
+            <div class="callout yellow">The lightning bolt appears only when measured charge current is above the firmware threshold.</div>
+            <div class="face-note">
+              <img src="release-assets/vidiotbox-faces/proud.png" alt="Proud guide face">
+              <p>Small one-percent changes are intentionally smoothed so the header does not flicker while scanning.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">08</div>
+      <div>
+        <h2>Case And Ports</h2>
+        <p class="deck">The optional printed case adds room for an internal LiPo, power switch, and button caps while keeping the USB-C port available.</p>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Connector</th><th>Pins</th><th>Good For</th></tr></thead>
+            <tbody>
+              <tr><td>Left near USB-C</td><td>GND, 5V, 3V3, TXD, RXD</td><td>UART devices such as GPS, serial sensors, or test readers.</td></tr>
+              <tr><td>Right near USB-C</td><td>GND, 3V3, SDA, SCL</td><td>I2C sensors such as BME280, SHT31, BMP280, BH1750, SGP30, SCD40/SCD41, RTC modules, and Qwiic or Stemma QT boards.</td></tr>
+            </tbody>
+          </table>
+          <div class="callout red">GPIO logic is 3.3 V. Do not feed 5 V signals into ESP32-C5 GPIO pins.</div>
+        </div>
+        <div class="case-download">
+          <img src="release-assets/LilyGOTDisplay-boxCropped.png" alt="Exploded render of the LilyGO T-Display C5 case">
+          <div class="case-download-copy">
+            <h3>Case Downloads</h3>
+            <p>Print the PocketProwler enclosure with room for the board, internal LiPo, power switch, and control buttons.</p>
+            <div class="case-links">
+              <a href="https://makerworld.com/en/models/3219883-lilygo-t-display-c5-case-lipo">MakerWorld</a>
+              <a href="https://www.printables.com/model/1824593-case-for-lilygo-t-display-c5-3000-mah-lipo">Printables</a>
+              <a href="https://www.thingiverse.com/thing:7401376">Thingiverse</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="num">09</div>
+      <div>
+        <h2>Troubleshooting</h2>
+        <div class="grid-2">
+          <table>
+            <thead><tr><th>Symptom</th><th>Try This</th></tr></thead>
+            <tbody>
+              <tr><td>Upload will not start</td><td>Use the BOOT and RST sequence, then retry upload.</td></tr>
+              <tr><td>No BLE names</td><td>Switch BLE to active scan. Some devices still stay unnamed by design.</td></tr>
+              <tr><td>Battery percent looks stuck</td><td>Watch voltage instead. Percent is smoothed to avoid flicker.</td></tr>
+              <tr><td>Weak or jumpy RSSI</td><td>Move slowly, rotate the scanner, and compare the trend over several samples.</td></tr>
+              <tr><td>Serial output needed</td><td>Run <code>pio device monitor</code> at <code>115200</code> baud.</td></tr>
+            </tbody>
+          </table>
+          <div class="face-note">
+            <img src="release-assets/vidiotbox-faces/happy.png" alt="Happy guide face">
+            <p>For firmware work, pin definitions live in <code>include/pin_config.h</code> and the main app logic lives in <code>src/main.cpp</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      PocketProwler - LilyGO T-Display C5 WiFi and Bluetooth scanner.
+      Copyright (c) 2026 Paul Hodara.
+    </footer>
+    <div class="end-marker">End of PocketProwler Instruction Manual</div>
+  </main>
+</body>
+</html>
