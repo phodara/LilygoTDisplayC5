@@ -12,6 +12,28 @@ PocketProwler turns the LilyGO T-Display C5 (ESP32-C5) into a self-contained han
 
   <img src="docs/release-assets/v2.2.0-ble-screen-blurred.jpg" width="400" alt="LilyGO T-Display C5 BLE scanner manufacturer data screen">
 
+## Quick Start (No Build Required)
+
+Each [release](https://github.com/phodara/LilygoTDisplayC5/releases/latest)
+includes prebuilt firmware — no PlatformIO or toolchain needed.
+
+1. Download **`firmware.factory.bin`** from the latest release.
+2. Connect the T-Display C5 via USB-C.
+3. Flash it with [esptool](https://docs.espressif.com/projects/esptool/):
+
+```
+pip install --upgrade esptool
+esptool.py --chip esp32c5 --port /dev/ttyACM0 write_flash 0x0 firmware.factory.bin
+```
+
+On Windows the port will be something like `COM5`. If flashing doesn't
+start, hold **BOOT**, tap **RST**, release **RST**, then release **BOOT**.
+
+The factory image contains everything (bootloader, partition table, and
+app), so it always flashes at offset `0x0` and works for both fresh
+installs and updates.
+
+
 ## 3D-Printed Case
 
 A purpose-built enclosure for PocketProwler — with an internal 3000mAh LiPo,
