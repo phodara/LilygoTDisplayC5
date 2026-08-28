@@ -105,27 +105,6 @@ Version 2.2 polishes the pocket scanner display and adds richer BLE advertisemen
 - [WiFi security labels](docs/wifi-security-labels.md)
 - [WiFi vendor lookup notes](docs/wifi-vendor-lookup.md)
 
-## Quick Start (No Build Required)
-
-Each [release](https://github.com/phodara/LilygoTDisplayC5/releases/latest)
-includes prebuilt firmware — no PlatformIO or toolchain needed.
-
-1. Download **`firmware.factory.bin`** from the latest release.
-2. Connect the T-Display C5 via USB-C.
-3. Flash it with [esptool](https://docs.espressif.com/projects/esptool/):
-
-```
-pip install --upgrade esptool
-esptool.py --chip esp32c5 --port /dev/ttyACM0 write_flash 0x0 firmware.factory.bin
-```
-
-On Windows the port will be something like `COM5`. If flashing doesn't
-start, hold **BOOT**, tap **RST**, release **RST**, then release **BOOT**.
-
-The factory image contains everything (bootloader, partition table, and
-app), so it always flashes at offset `0x0` and works for both fresh
-installs and updates.
-
 ## Build
 
 ```sh
