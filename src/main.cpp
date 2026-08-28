@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <LovyanGFX.hpp>
 #include <NimBLEDevice.h>
+#include <Preferences.h>
 #include <WiFi.h>
 #include <Wire.h>
 #include <driver/gpio.h>
@@ -100,6 +101,7 @@ enum class BleDetailMode {
 
 TDisplayC5 tft;
 AXP2602 pmu(AXP2602_I2C_ADDR_DEFAULT, Wire);
+Preferences batteryPrefs;
 
 static constexpr uint8_t MAX_NETWORKS = 24;
 static constexpr uint8_t MAX_BLE_DEVICES = 32;
@@ -113,6 +115,13 @@ static constexpr uint32_t BOOT_SCREEN_MS = 3000;
 static constexpr uint32_t BUTTON_DEBOUNCE_MS = 220;
 static constexpr uint32_t MODE_HOLD_MS = 700;
 static constexpr uint32_t BATTERY_INTERVAL_MS = 5000;
+static constexpr uint32_t BATTERY_STORE_INTERVAL_MS = 300000;
+static constexpr uint8_t BATTERY_SAMPLE_COUNT = 5;
+static constexpr uint32_t BATTERY_SAMPLE_DELAY_MS = 12;
+static constexpr int BATTERY_BOOT_REUSE_TOLERANCE = 4;
+static constexpr float BATTERY_CHARGE_ON_CURRENT_A = 0.04f;
+static constexpr float BATTERY_CHARGE_OFF_CURRENT_A = 0.005f;
+static constexpr float BATTERY_FULL_VOLTAGE = 4.18f;
 static constexpr int HEADER_WIFI_SCAN_X = 70;
 static constexpr int HEADER_WIFI_BATTERY_X = 126;
 static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
@@ -150,13 +159,17 @@ static uint32_t lastButtonMs = 0;
 static uint32_t bothButtonsPressedAtMs = 0;
 static uint32_t buttonsArmAtMs = 0;
 static uint32_t lastBatteryMs = 0;
+static uint32_t lastBatteryStoreMs = 0;
 static uint32_t nextWifiScanMs = 0;
 static uint32_t scanCount = 0;
 static uint32_t bleScanCount = 0;
 static float batteryVoltage = 0.0f;
 static float batteryCurrent = 0.0f;
 static int batteryPercent = -1;
+static int lastStoredBatteryPercent = -1;
+static int storedBatteryPercent = -1;
 static bool batteryCharging = false;
+static bool batteryPrefsReady = false;
 
 void drawAnalyzer();
 void drawBootScreen();
@@ -408,6 +421,127 @@ String batteryLabel()
   return "BAT " + String(batteryPercent) + "%";
 }
 
+void readBatterySample(float &voltage, float &current, uint8_t &soc)
+{
+  uint8_t socSamples[BATTERY_SAMPLE_COUNT];
+  float voltageSum = 0.0f;
+  float currentSum = 0.0f;
+
+  for (uint8_t i = 0; i < BATTERY_SAMPLE_COUNT; i++) {
+    voltageSum += pmu.getBatteryVoltage();
+    currentSum += pmu.getBatteryCurrent();
+    socSamples[i] = pmu.getSOC();
+    if (i + 1 < BATTERY_SAMPLE_COUNT) {
+      delay(BATTERY_SAMPLE_DELAY_MS);
+    }
+  }
+
+  for (uint8_t i = 1; i < BATTERY_SAMPLE_COUNT; i++) {
+    const uint8_t value = socSamples[i];
+    int j = i - 1;
+    while (j >= 0 && socSamples[j] > value) {
+      socSamples[j + 1] = socSamples[j];
+      j--;
+    }
+    socSamples[j + 1] = value;
+  }
+
+  voltage = voltageSum / BATTERY_SAMPLE_COUNT;
+  current = currentSum / BATTERY_SAMPLE_COUNT;
+  soc = socSamples[BATTERY_SAMPLE_COUNT / 2];
+}
+
+int estimateBatteryPercentFromVoltage(float voltage)
+{
+  if (voltage >= BATTERY_FULL_VOLTAGE) return 100;
+  if (voltage >= 4.10f) return map(static_cast<int>(voltage * 1000), 4100, 4180, 90, 100);
+  if (voltage >= 3.98f) return map(static_cast<int>(voltage * 1000), 3980, 4100, 75, 90);
+  if (voltage >= 3.85f) return map(static_cast<int>(voltage * 1000), 3850, 3980, 55, 75);
+  if (voltage >= 3.75f) return map(static_cast<int>(voltage * 1000), 3750, 3850, 35, 55);
+  if (voltage >= 3.65f) return map(static_cast<int>(voltage * 1000), 3650, 3750, 20, 35);
+  if (voltage >= 3.50f) return map(static_cast<int>(voltage * 1000), 3500, 3650, 8, 20);
+  if (voltage >= 3.30f) return map(static_cast<int>(voltage * 1000), 3300, 3500, 0, 8);
+  return 0;
+}
+
+int normalizeBatteryPercent(uint8_t rawSoc, float voltage, bool charging)
+{
+  int percent = constrain(static_cast<int>(rawSoc), 0, 100);
+
+  if (percent >= 99 || (voltage >= BATTERY_FULL_VOLTAGE && percent >= 95)) {
+    return 100;
+  }
+
+  if (percent == 0 && voltage > 3.50f) {
+    percent = estimateBatteryPercentFromVoltage(voltage);
+  }
+
+  if (charging && voltage >= 4.15f && percent >= 96) {
+    return 100;
+  }
+
+  return percent;
+}
+
+bool chargingStateFromCurrent(float current)
+{
+  if (batteryCharging) {
+    return current > BATTERY_CHARGE_OFF_CURRENT_A;
+  }
+  return current > BATTERY_CHARGE_ON_CURRENT_A;
+}
+
+int stabilizeBatteryPercent(int candidatePercent, bool charging)
+{
+  if (candidatePercent == 100) {
+    return 100;
+  }
+
+  if (batteryPercent < 0) {
+    if (storedBatteryPercent >= 0 && abs(candidatePercent - storedBatteryPercent) <= BATTERY_BOOT_REUSE_TOLERANCE) {
+      return storedBatteryPercent;
+    }
+    return candidatePercent;
+  }
+
+  if (batteryPercent == 100 && candidatePercent >= 96) {
+    return 100;
+  }
+
+  const int delta = candidatePercent - batteryPercent;
+  if (abs(delta) <= 1) {
+    return batteryPercent;
+  }
+
+  if (charging && delta < 0 && abs(delta) <= 3) {
+    return batteryPercent;
+  }
+
+  if (!charging && delta > 0 && delta <= 3) {
+    return batteryPercent;
+  }
+
+  return candidatePercent;
+}
+
+void storeBatteryPercentIfNeeded()
+{
+  if (!batteryPrefsReady || batteryPercent < 0 || batteryPercent == lastStoredBatteryPercent) {
+    return;
+  }
+
+  const uint32_t now = millis();
+  if (lastStoredBatteryPercent >= 0 &&
+      abs(batteryPercent - lastStoredBatteryPercent) < 5 &&
+      now - lastBatteryStoreMs < BATTERY_STORE_INTERVAL_MS) {
+    return;
+  }
+
+  batteryPrefs.putInt("pct", batteryPercent);
+  lastStoredBatteryPercent = batteryPercent;
+  lastBatteryStoreMs = now;
+}
+
 void updateBattery(bool forceRedraw = false)
 {
   const uint32_t now = millis();
@@ -423,10 +557,11 @@ void updateBattery(bool forceRedraw = false)
   const int previousPercent = batteryPercent;
   const bool previousCharging = batteryCharging;
 
-  batteryVoltage = pmu.getBatteryVoltage();
-  batteryCurrent = pmu.getBatteryCurrent();
-  batteryPercent = constrain(static_cast<int>(pmu.getSOC()), 0, 100);
-  batteryCharging = batteryCurrent > 0.02f;
+  uint8_t rawSoc = 0;
+  readBatterySample(batteryVoltage, batteryCurrent, rawSoc);
+  batteryCharging = chargingStateFromCurrent(batteryCurrent);
+  batteryPercent = stabilizeBatteryPercent(normalizeBatteryPercent(rawSoc, batteryVoltage, batteryCharging), batteryCharging);
+  storeBatteryPercentIfNeeded();
 
   if (forceRedraw) {
     return;
@@ -1357,8 +1492,17 @@ void initBattery()
 {
   pmuReady = pmu.begin();
   if (pmuReady) {
+    batteryPrefsReady = batteryPrefs.begin("battery", false);
+    if (batteryPrefsReady) {
+      storedBatteryPercent = batteryPrefs.getInt("pct", -1);
+      lastStoredBatteryPercent = storedBatteryPercent;
+    }
     updateBattery(true);
-    Serial.printf("AXP2602 battery: %d%% %.2fV\n", batteryPercent, batteryVoltage);
+    Serial.printf("AXP2602 battery: %d%% %.2fV %.3fA%s\n",
+                  batteryPercent,
+                  batteryVoltage,
+                  batteryCurrent,
+                  batteryCharging ? " charging" : "");
   } else {
     Serial.println("AXP2602 PMU not found");
   }
