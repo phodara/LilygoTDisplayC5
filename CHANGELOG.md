@@ -2,6 +2,24 @@
 
 # Changelog
 
+## v2.2.0 - 2026-08-28
+
+### Firmware
+
+- Improved battery percentage monitoring with sampled PMU reads, median SOC selection, averaged voltage/current, charge-current hysteresis, near-full correction, and reboot reuse of the last stable percentage.
+- Updated the top header layout to show cleaner WiFi/BLE item counts and battery voltage alongside battery percentage.
+- Added BLE advertisement details, including address type, manufacturer data length, manufacturer company hints, first service UUID, and service UUID count.
+- Added a BLE manufacturer-data detail panel with wrapped hexadecimal advertisement bytes.
+- Changed the Bluetooth header label to the shorter `BLE` form.
+- Updated WiFi detail security labels so WPA and WPA2 personal modes can show as `WPA-PSK` and `WPA2-PSK`.
+- Moved battery voltage out of lower detail panels because it now appears in the header.
+
+### Documentation
+
+- Added v2.2.0 WiFi and BLE screen photos for the project hero.
+- Added battery recommendations, WiFi security label notes, and WiFi vendor lookup notes.
+- Updated Bluetooth scanner and button-control docs for the new manufacturer-data detail view.
+
 ## v2.1.0 - 2026-08-23
 
 ### Firmware

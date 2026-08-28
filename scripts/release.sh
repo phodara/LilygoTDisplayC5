@@ -3,7 +3,7 @@ set -euo pipefail
 
 if [[ $# -lt 2 ]]; then
   echo "Usage: $0 <version> <commit message>"
-  echo "Example: $0 v2.0.1 \"Release v2.0.1 BLE scanner refinements\""
+  echo "Example: $0 v2.2.0 \"Release v2.2.0 display and BLE data refinements\""
   exit 1
 fi
 
@@ -26,7 +26,12 @@ git add \
   .vscode/extensions.json \
   .vscode/settings.json \
   README.md \
+  docs/battery-recommendations.md \
   docs/bluetooth-scanner.md \
+  docs/button-commands.md \
+  docs/release-assets \
+  docs/wifi-security-labels.md \
+  docs/wifi-vendor-lookup.md \
   CHANGELOG.md
 
 if git diff --cached --quiet; then

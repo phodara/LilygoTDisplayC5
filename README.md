@@ -2,13 +2,13 @@
 
 <!-- Copyright (c) 2026 Paul Hodara. MIT License. -->
 
-# LilyGO T-Display C5 WiFi and Bluetooth (as of v2.1) Scanner
+# LilyGO T-Display C5 WiFi and Bluetooth Scanner
 
 PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/04c630fe-b077-48b6-a377-c4726b4ede97" width="400" alt="LilyGO T-Display C5 WiFi scanner">
+  <img src="docs/release-assets/v2.2.0-wifi-screen-blurred.jpg" width="400" alt="LilyGO T-Display C5 WiFi scanner screen">
 
-  <img width="400" alt="LilyGO T-Display C5 Bluetooth scanner screen" src="https://github.com/user-attachments/assets/42a68532-da60-4bc8-871d-a1899c498f78" />
+  <img src="docs/release-assets/v2.2.0-ble-screen-blurred.jpg" width="400" alt="LilyGO T-Display C5 BLE scanner manufacturer data screen">
 
 </p>
 
@@ -35,19 +35,17 @@ PlatformIO WiFi and Bluetooth Scanner for the LilyGO T-Display C5.
 Passive WiFi scans can see RSSI, channel, band, security, and the number of BSSIDs sharing a channel, but they do not reliably expose internet throughput or AP channel width. The display therefore shows same-channel BSSID count as the practical crowding indicator and marks raw scan bandwidth as `n/a`.
 
 
-## Version 2.1 Improvements
+## Version 2.2 Improvements
 
-Version 2 adds a practical Bluetooth scanner mode and display redraw improvements:
+Version 2.2 polishes the pocket scanner display and adds richer BLE advertisement details:
 
-- BLE scanner mode shows nearby BLE names, address details, RSSI, signal bars, last-seen age, and RSSI history.
-- Passive scan mode listens only for advertisements.
-- Active scan mode requests scan-response data, which can reveal names for some BLE devices.
-- BLE entries remain visible for 60 seconds after last seen, which helps with low-power devices that advertise intermittently.
-- Named BLE devices are de-duplicated when they appear with changing private addresses.
-- Display flicker is reduced by avoiding full-screen clears during routine updates.
+- Battery percentage monitoring is steadier, with sampled readings, charge-current hysteresis, near-full correction, and reboot reuse of the last stable percent.
+- The top header now carries a cleaner WiFi/BLE status layout plus battery voltage.
+- BLE detail mode adds address type, manufacturer/company hints, advertised service UUID hints, and a manufacturer-data hex panel.
+- WiFi detail mode uses clearer WPA/WPA2 security labels.
 
 ### Button Controls
-![New Button Functions](https://raw.githubusercontent.com/phodara/LilygoTDisplayC5/42b126e/docs/release-assets/button-functions-release-graphic.svg)
+![Button Functions](docs/release-assets/button-functions-release-graphic.svg)
 
 ## Feature Notes
 
@@ -61,6 +59,8 @@ Version 2 adds a practical Bluetooth scanner mode and display redraw improvement
 - [RSSI reference](docs/rssi-reference.md)
 - [Scan data export idea](docs/scan-data-export.md)
 - [WiFi region behavior](docs/wifi-region-behavior.md)
+- [WiFi security labels](docs/wifi-security-labels.md)
+- [WiFi vendor lookup notes](docs/wifi-vendor-lookup.md)
 
 ## Build
 
@@ -87,10 +87,10 @@ pio device monitor
 After updating code and documentation for a new version, the reusable release helper can commit, tag, and push the staged release files:
 
 ```sh
-./scripts/release.sh v2.0.1 "Release v2.0.1 BLE scanner refinements"
+./scripts/release.sh v2.2.0 "Release v2.2.0 display and BLE data refinements"
 ```
 
-The script expects a semantic version tag such as `v2.0.1`. Edit `scripts/release.sh` if a future release needs to include different files.
+The script expects a semantic version tag such as `v2.2.0`. Edit `scripts/release.sh` if a future release needs to include different files.
 
 ## License
 

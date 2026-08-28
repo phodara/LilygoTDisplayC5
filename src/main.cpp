@@ -139,7 +139,7 @@ static constexpr int HEADER_WIFI_SCAN_X = 48;
 static constexpr int HEADER_WIFI_BATTERY_X = 98;
 static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
 static constexpr const char *APP_NAME = "PocketProwler";
-static constexpr const char *APP_VERSION = "2.1.0";
+static constexpr const char *APP_VERSION = "2.2.0";
 static constexpr const char *APP_COPYRIGHT = "Copyright (c) 2026 Paul Hodara";
 static constexpr BleCompanyName BLE_COMPANY_NAMES[] = {
   {0x0000, "Ericsson"},
