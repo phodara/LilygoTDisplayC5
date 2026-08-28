@@ -19,7 +19,7 @@ hardware power switch, and printed button caps — is available on
 
 MakerWorld:
 **[LilyGO T-Display C5 Case + LiPo →](https://makerworld.com/en/models/3219883-lilygo-t-display-c5-case-lipo)**
-The download includes a Bambu Studio 3MF profile, individual STLs, and a PDF
+<P>The download includes a Bambu Studio 3MF profile, individual STLs, and a PDF
 bill of materials with wiring and assembly instructions.
 
 Printables:
