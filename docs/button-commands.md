@@ -18,7 +18,7 @@ button does not immediately trigger app navigation.
 | Control | WiFi mode | Bluetooth mode |
 | --- | --- | --- |
 | Tap upper | Select next access point | Select next BLE device |
-| Tap lower | Cycle RSSI history, BSSID detail, full AP list | Cycle RSSI history, address detail, full BLE list |
+| Tap lower | Cycle RSSI history, BSSID detail, full AP list | Cycle RSSI history, address detail, manufacturer data, full BLE list |
 | Tap both together | No action | Toggle passive/active BLE scan |
 | Hold both together | Switch to Bluetooth mode | Switch to WiFi mode |
 
@@ -47,7 +47,7 @@ Tap the lower button to cycle through the WiFi detail views:
 | Step | View | What it shows |
 | ---: | --- | --- |
 | 1 | RSSI history | Short AP list plus RSSI graph for the selected access point |
-| 2 | BSSID detail | Selected SSID, full BSSID/MAC, security, hidden flag, band, channel, same-channel BSSID count, RSSI, signal percentage, and battery voltage when available |
+| 2 | BSSID detail | Selected SSID, full BSSID/MAC, vendor/OUI hint, detailed security, hidden flag, band, channel, same-channel BSSID count, RSSI, and signal percentage. See `docs/wifi-security-labels.md` and `docs/wifi-vendor-lookup.md` for label meanings. |
 | 3 | Full AP list | Full-screen list of scanned access points |
 
 After the full AP list, the next lower-button tap returns to RSSI history.
@@ -62,7 +62,7 @@ A quick both-button tap in WiFi mode is ignored.
 
 ## Bluetooth Mode
 
-Bluetooth mode scans nearby BLE advertisements. The header says `Bluetooth` and
+Bluetooth mode scans nearby BLE advertisements. The header says `BLE` and
 shows the BLE scan mode as `Passive` or `Active`.
 
 ### Select BLE Devices
@@ -80,8 +80,9 @@ Tap the lower button to cycle through the Bluetooth detail views:
 | Step | View | What it shows |
 | ---: | --- | --- |
 | 1 | RSSI history | Short BLE list plus RSSI graph for the selected device |
-| 2 | Address detail | Selected BLE name, full address, RSSI, signal percentage, last-seen age, connectable/beacon status, scan mode, and battery voltage when available |
-| 3 | Full BLE list | Full-screen list of detected BLE devices |
+| 2 | Address detail | Selected BLE name, address type, full address, RSSI, signal percentage, last-seen age, connectable/beacon status, manufacturer/company hint, and service UUID hint |
+| 3 | Manufacturer data | Selected BLE name, manufacturer/company hint, service UUID hint, and manufacturer data as wrapped hexadecimal text |
+| 4 | Full BLE list | Full-screen list of detected BLE devices |
 
 After the full BLE list, the next lower-button tap returns to RSSI history.
 

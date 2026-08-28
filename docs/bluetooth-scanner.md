@@ -35,10 +35,13 @@ Displayed fields:
 | --- | --- |
 | Name | Advertised BLE device name, or a short fallback based on the address. |
 | Address | BLE address shown in detail view. |
+| Address type | Public, random, public identity, or random identity address type. Random addresses may change for privacy. |
 | RSSI | Signal strength in dBm. |
 | Signal bar | Visual signal strength. |
 | Seen | Time since the device was last seen. |
 | Connectable | Whether the advertisement reports a connectable device or beacon-like advertiser. |
+| Manufacturer data | Total bytes of manufacturer-specific advertisement data, shown with a company hint such as `MFG Apple 12B` when recognized. |
+| Service UUID | First advertised service UUID, with a `+N` suffix when more advertised service UUIDs are present. |
 | Scan mode | Passive or active BLE scan mode. |
 
 Controls:
@@ -46,7 +49,7 @@ Controls:
 | Control | Action |
 | --- | --- |
 | Upper button | Move to the next detected BLE device. |
-| Lower button | Toggle between RSSI graph and address/detail view. |
+| Lower button | Cycle RSSI history, address detail, manufacturer data, and full BLE list. |
 | Both buttons tapped | Toggle passive/active BLE scan mode. |
 | Both buttons held | Switch between WiFi and Bluetooth modes. |
 
@@ -57,6 +60,31 @@ Passive scanning only listens for normal BLE advertisements. It is quieter and m
 Active scanning asks advertisers for scan-response data. Some devices put their local name in the scan response, so active mode can reveal names that passive mode misses. Active scanning still cannot force a device to reveal a friendly name; phones, earbuds, locks, and other privacy-conscious devices may remain unnamed or may rotate their address.
 
 The Bluetooth detail screen shows the current scan mode. Serial Monitor also logs scan starts as passive or active.
+
+## Manufacturer Data Panel
+
+The manufacturer data view shows the selected device's manufacturer-specific
+advertisement bytes as hexadecimal text. If the first two manufacturer-data
+bytes match the firmware's curated Bluetooth company ID table, the panel shows a
+short company name. Unknown company IDs fall back to hex, such as `0x1234`.
+
+The bytes are wrapped across multiple lines so payloads such as `MFG Apple 21B`
+can be read on the display.
+
+Example:
+
+```text
+MFG Apple 21B  SVC --
+4C001219...
+...
+```
+
+Manufacturer data is private/vendor-defined payload data. The first bytes often
+identify the vendor or data format, but the scanner does not decode those bytes
+into a brand or product name.
+
+The built-in lookup table intentionally covers a common 100-entry subset instead
+of the full Bluetooth SIG company registry.
 
 ## Device Retention And De-Duplication
 

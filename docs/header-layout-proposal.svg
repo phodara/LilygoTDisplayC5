@@ -31,19 +31,19 @@
     <rect class="header" x="0" y="0" width="640" height="56"/>
 
     <rect class="zone" x="16" y="6" width="146" height="44"/>
-    <rect class="zone" x="252" y="6" width="150" height="44"/>
+    <rect class="zone" x="196" y="6" width="198" height="44"/>
     <rect class="zone" x="418" y="6" width="206" height="44"/>
 
     <text class="mono white" x="16" y="36">Wifi</text>
-    <polygon points="214,12 202,28 214,28 208,44 224,24 212,24" fill="#ffe66b"/>
-    <text class="mono green" x="242" y="36">BAT 62%</text>
-    <text class="mono cyan" x="624" y="36" text-anchor="end">18 APs 1/18</text>
+    <polygon points="174,12 162,28 174,28 168,44 184,24 172,24" fill="#ffe66b"/>
+    <text class="mono green" x="196" y="36">BAT 62% 4.08V</text>
+    <text class="mono cyan" x="624" y="36" text-anchor="end">1/18 APs</text>
 
     <line class="guide" x1="0" y1="68" x2="0" y2="86"/>
-    <line class="guide" x1="252" y1="68" x2="252" y2="86"/>
+    <line class="guide" x1="196" y1="68" x2="196" y2="86"/>
     <line class="guide" x1="624" y1="68" x2="624" y2="86"/>
     <text class="note" x="0" y="104">x=8 title</text>
-    <text class="note" x="252" y="104">x=126 battery slot</text>
+    <text class="note" x="196" y="104">x=98 battery slot</text>
     <text class="note" x="624" y="104" text-anchor="end">x=312 right-aligned AP count</text>
   </g>
 
@@ -54,14 +54,17 @@
     <rect class="header" x="0" y="0" width="640" height="56"/>
 
     <rect class="zone" x="16" y="6" width="146" height="44"/>
-    <rect class="zone" x="140" y="6" width="120" height="44"/>
+    <rect class="zone" x="96" y="6" width="86" height="44"/>
+    <rect class="zone" x="196" y="6" width="198" height="44"/>
     <rect class="zone" x="418" y="6" width="206" height="44"/>
 
     <text class="mono white" x="16" y="36">Wifi</text>
-    <text class="mono yellow" x="140" y="36">Scan</text>
-    <text class="mono cyan" x="624" y="36" text-anchor="end">18 APs 1/18</text>
+    <text class="mono yellow" x="96" y="36">Scan</text>
+    <polygon points="174,12 162,28 174,28 168,44 184,24 172,24" fill="#ffe66b"/>
+    <text class="mono green" x="196" y="36">BAT 62% 4.08V</text>
+    <text class="mono cyan" x="624" y="36" text-anchor="end">1/18 APs</text>
 
-    <text class="note" x="0" y="82">Battery lightning bolt and percent are hidden only while scanning.</text>
+    <text class="note" x="0" y="82">x=48 scan, x=98 battery slot with voltage.</text>
     <text class="note" x="624" y="82" text-anchor="end">AP count stays visible on the right.</text>
   </g>
 </svg>

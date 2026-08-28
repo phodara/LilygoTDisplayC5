@@ -77,9 +77,21 @@ struct ButtonState {
 struct BleDeviceInfo {
   String name;
   String address;
+  String manufacturerDataHex;
+  String serviceUuid;
   int32_t rssi = -127;
   uint32_t lastSeenMs = 0;
+  uint16_t manufacturerCompanyId = 0;
+  uint16_t manufacturerDataBytes = 0;
+  uint8_t serviceUuidCount = 0;
+  uint8_t addressType = 0;
+  bool hasManufacturerCompanyId = false;
   bool connectable = false;
+};
+
+struct BleCompanyName {
+  uint16_t id;
+  const char *name;
 };
 
 enum class AppMode {
@@ -96,6 +108,7 @@ enum class WifiDetailMode {
 enum class BleDetailMode {
   History,
   Address,
+  MfgData,
   List,
 };
 
@@ -122,12 +135,114 @@ static constexpr int BATTERY_BOOT_REUSE_TOLERANCE = 4;
 static constexpr float BATTERY_CHARGE_ON_CURRENT_A = 0.04f;
 static constexpr float BATTERY_CHARGE_OFF_CURRENT_A = 0.005f;
 static constexpr float BATTERY_FULL_VOLTAGE = 4.18f;
-static constexpr int HEADER_WIFI_SCAN_X = 70;
-static constexpr int HEADER_WIFI_BATTERY_X = 126;
+static constexpr int HEADER_WIFI_SCAN_X = 48;
+static constexpr int HEADER_WIFI_BATTERY_X = 98;
 static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
 static constexpr const char *APP_NAME = "PocketProwler";
 static constexpr const char *APP_VERSION = "2.1.0";
 static constexpr const char *APP_COPYRIGHT = "Copyright (c) 2026 Paul Hodara";
+static constexpr BleCompanyName BLE_COMPANY_NAMES[] = {
+  {0x0000, "Ericsson"},
+  {0x0001, "Nokia"},
+  {0x0002, "Intel"},
+  {0x0006, "Microsoft"},
+  {0x0008, "Motorola"},
+  {0x0009, "Infineon"},
+  {0x000A, "Qualcomm"},
+  {0x000D, "TI"},
+  {0x000F, "Broadcom"},
+  {0x001D, "Qualcomm"},
+  {0x0025, "NXP"},
+  {0x0030, "STMicro"},
+  {0x0036, "Renesas"},
+  {0x003A, "Panasonic"},
+  {0x0046, "MediaTek"},
+  {0x004C, "Apple"},
+  {0x0055, "Plantronics"},
+  {0x0057, "Harman"},
+  {0x0059, "Nordic"},
+  {0x005A, "EM Micro"},
+  {0x005C, "Belkin"},
+  {0x005D, "Realtek"},
+  {0x0065, "HP"},
+  {0x0067, "GN Hearing"},
+  {0x0068, "GM"},
+  {0x006B, "Polar"},
+  {0x0075, "Samsung"},
+  {0x0077, "Laird"},
+  {0x0078, "Nike"},
+  {0x0087, "Garmin"},
+  {0x0089, "GN Hearing"},
+  {0x0094, "Airoha"},
+  {0x009E, "Bose"},
+  {0x009F, "Suunto"},
+  {0x00B9, "JCI"},
+  {0x00C3, "adidas"},
+  {0x00C4, "LG"},
+  {0x00CC, "Beats"},
+  {0x00CD, "Microchip"},
+  {0x00D0, "Dexcom"},
+  {0x00D1, "Polar"},
+  {0x00D2, "Renesas"},
+  {0x00D7, "Qualcomm"},
+  {0x00D8, "Qualcomm"},
+  {0x00E0, "Google"},
+  {0x0103, "B&O"},
+  {0x0107, "Demant"},
+  {0x010E, "Audi"},
+  {0x011A, "Qualcomm"},
+  {0x011F, "VW"},
+  {0x0120, "Porsche"},
+  {0x0124, "HID"},
+  {0x012D, "Sony"},
+  {0x012E, "ASSA"},
+  {0x0131, "Cypress"},
+  {0x013B, "Allegion"},
+  {0x014B, "MasterLock"},
+  {0x0154, "Pebble"},
+  {0x0155, "Netatmo"},
+  {0x0157, "Huami"},
+  {0x015D, "Estimote"},
+  {0x015E, "Unikey"},
+  {0x0164, "Yeelink"},
+  {0x0165, "Milwaukee"},
+  {0x0170, "Roche"},
+  {0x0171, "Amazon"},
+  {0x0178, "Casio"},
+  {0x017C, "Mercedes"},
+  {0x018E, "Google"},
+  {0x01AB, "Meta"},
+  {0x01D1, "August"},
+  {0x01DA, "Logitech"},
+  {0x01DD, "Philips"},
+  {0x022B, "Tesla"},
+  {0x027D, "Huawei"},
+  {0x0282, "Sonova"},
+  {0x0295, "Sivantos"},
+  {0x02A6, "Bosch"},
+  {0x02C5, "Lenovo"},
+  {0x02DE, "Samsung"},
+  {0x02E5, "Espressif"},
+  {0x02F2, "GoPro"},
+  {0x038F, "Xiaomi"},
+  {0x03FF, "Withings"},
+  {0x041E, "Dell"},
+  {0x0494, "Sennheiser"},
+  {0x0499, "Ruuvi"},
+  {0x0526, "Honeywell"},
+  {0x058E, "Meta"},
+  {0x060F, "Signify"},
+  {0x067C, "Tile"},
+  {0x0723, "Ford"},
+  {0x0977, "Toyota"},
+  {0x0A2A, "Yamaha"},
+  {0x0BA3, "Sonova"},
+  {0x0BDE, "Yale"},
+  {0x0CC2, "Anker"},
+  {0x0EC5, "Alibaba"},
+  {0x0FA6, "Ugreen"},
+  {0x1040, "RaspberryPi"},
+};
 
 static NetworkInfo networks[MAX_NETWORKS];
 static BleDeviceInfo bleDevices[MAX_BLE_DEVICES];
@@ -265,6 +380,100 @@ const char *bleScanModeLabel()
   return bleActiveScan ? "active" : "passive";
 }
 
+const char *bleAddressTypeLabel(uint8_t addressType)
+{
+  switch (addressType) {
+    case 0:
+      return "public";
+    case 1:
+      return "random";
+    case 2:
+      return "pub-id";
+    case 3:
+      return "rnd-id";
+    default:
+      return "addr";
+  }
+}
+
+String compactBleUuid(const String &uuid)
+{
+  if (uuid.length() <= 8) {
+    return uuid;
+  }
+
+  return uuid.substring(0, 8);
+}
+
+String bytesToHex(const std::string &data)
+{
+  static constexpr char HEX_DIGITS[] = "0123456789ABCDEF";
+  String hex;
+  hex.reserve(data.length() * 2);
+  for (size_t i = 0; i < data.length(); i++) {
+    const uint8_t value = static_cast<uint8_t>(data[i]);
+    hex += HEX_DIGITS[value >> 4];
+    hex += HEX_DIGITS[value & 0x0F];
+  }
+  return hex;
+}
+
+String formatCompanyId(uint16_t companyId)
+{
+  char label[7];
+  snprintf(label, sizeof(label), "0x%04X", companyId);
+  return String(label);
+}
+
+const char *lookupBleCompanyName(uint16_t companyId)
+{
+  for (const BleCompanyName &company : BLE_COMPANY_NAMES) {
+    if (company.id == companyId) {
+      return company.name;
+    }
+  }
+
+  return nullptr;
+}
+
+String bleManufacturerLabel(const BleDeviceInfo &device)
+{
+  if (device.manufacturerDataBytes == 0) {
+    return "--";
+  }
+
+  if (!device.hasManufacturerCompanyId) {
+    return "data";
+  }
+
+  const char *companyName = lookupBleCompanyName(device.manufacturerCompanyId);
+  if (companyName) {
+    return companyName;
+  }
+
+  return formatCompanyId(device.manufacturerCompanyId);
+}
+
+String bleAdvertisementSummary(const BleDeviceInfo &device)
+{
+  String summary = "ADV";
+  summary += " MFG ";
+  summary += bleManufacturerLabel(device);
+  if (device.manufacturerDataBytes > 0) {
+    summary += " " + String(device.manufacturerDataBytes) + "B";
+  }
+  summary += " SVC ";
+  if (device.serviceUuidCount > 0) {
+    summary += compactBleUuid(device.serviceUuid);
+    if (device.serviceUuidCount > 1) {
+      summary += "+" + String(device.serviceUuidCount - 1);
+    }
+  } else {
+    summary += "--";
+  }
+  return summary;
+}
+
 void sortBleDevices()
 {
   for (int i = 0; i < bleDeviceCount - 1; i++) {
@@ -297,7 +506,17 @@ void pruneBleDevices()
   }
 }
 
-void updateBleDevice(const String &address, const String &name, int32_t rssi, bool connectable)
+void updateBleDevice(const String &address,
+                     const String &name,
+                     int32_t rssi,
+                     bool connectable,
+                     uint8_t addressType,
+                     bool hasManufacturerCompanyId,
+                     uint16_t manufacturerCompanyId,
+                     uint16_t manufacturerDataBytes,
+                     const String &manufacturerDataHex,
+                     uint8_t serviceUuidCount,
+                     const String &serviceUuid)
 {
   const uint32_t now = millis();
   String selectedAddress = bleDeviceCount > 0 ? bleDevices[selectedBleDevice].address : trackedBleAddress;
@@ -333,6 +552,13 @@ void updateBleDevice(const String &address, const String &name, int32_t rssi, bo
   bleDevices[index].rssi = rssi;
   bleDevices[index].lastSeenMs = now;
   bleDevices[index].connectable = connectable;
+  bleDevices[index].addressType = addressType;
+  bleDevices[index].hasManufacturerCompanyId = hasManufacturerCompanyId;
+  bleDevices[index].manufacturerCompanyId = manufacturerCompanyId;
+  bleDevices[index].manufacturerDataBytes = manufacturerDataBytes;
+  bleDevices[index].manufacturerDataHex = manufacturerDataHex;
+  bleDevices[index].serviceUuidCount = serviceUuidCount;
+  bleDevices[index].serviceUuid = serviceUuid;
 
   sortBleDevices();
 
@@ -359,7 +585,35 @@ class BleScanCallbacks : public NimBLEScanCallbacks {
   {
     String address = device->getAddress().toString().c_str();
     String name = device->haveName() ? device->getName().c_str() : "";
-    updateBleDevice(address, name, device->getRSSI(), device->isConnectable());
+    bool hasManufacturerCompanyId = false;
+    uint16_t manufacturerCompanyId = 0;
+    uint16_t manufacturerDataBytes = 0;
+    String manufacturerDataHex;
+    const uint8_t manufacturerDataCount = device->getManufacturerDataCount();
+    for (uint8_t i = 0; i < manufacturerDataCount; i++) {
+      const std::string manufacturerData = device->getManufacturerData(i);
+      if (!hasManufacturerCompanyId && manufacturerData.length() >= 2) {
+        manufacturerCompanyId = static_cast<uint8_t>(manufacturerData[0]) |
+                                (static_cast<uint16_t>(static_cast<uint8_t>(manufacturerData[1])) << 8);
+        hasManufacturerCompanyId = true;
+      }
+      manufacturerDataBytes += manufacturerData.length();
+      manufacturerDataHex += bytesToHex(manufacturerData);
+    }
+
+    const uint8_t serviceUuidCount = device->getServiceUUIDCount();
+    String serviceUuid = serviceUuidCount > 0 ? device->getServiceUUID(0).toString().c_str() : "";
+    updateBleDevice(address,
+                    name,
+                    device->getRSSI(),
+                    device->isConnectable(),
+                    device->getAddressType(),
+                    hasManufacturerCompanyId,
+                    manufacturerCompanyId,
+                    manufacturerDataBytes,
+                    manufacturerDataHex,
+                    serviceUuidCount,
+                    serviceUuid);
   }
 
   void onScanEnd(const NimBLEScanResults &results, int reason) override
@@ -415,10 +669,10 @@ int signalPercent(int32_t rssi)
 String batteryLabel()
 {
   if (!pmuReady || batteryPercent < 0) {
-    return "BAT --";
+    return "BAT --% --.--V";
   }
 
-  return "BAT " + String(batteryPercent) + "%";
+  return "BAT " + String(batteryPercent) + "% " + String(batteryVoltage, 2) + "V";
 }
 
 void readBatterySample(float &voltage, float &current, uint8_t &soc)
@@ -622,6 +876,18 @@ const char *securityLabel(wifi_auth_mode_t auth)
   }
 }
 
+const char *securityDetailLabel(wifi_auth_mode_t auth)
+{
+  switch (auth) {
+    case WIFI_AUTH_WPA_PSK:
+      return "WPA-PSK";
+    case WIFI_AUTH_WPA2_PSK:
+      return "WPA2-PSK";
+    default:
+      return securityLabel(auth);
+  }
+}
+
 String displaySsid(const NetworkInfo &network)
 {
   if (network.ssid.length() == 0) {
@@ -670,18 +936,20 @@ void drawHeader()
   tft.fillRect(0, 0, tft.width(), 28, TFT_NAVY);
   String status;
   if (appMode == AppMode::Wifi) {
-    status = String(networkCount) + " APs";
     if (networkCount > 0) {
-      status += " " + String(selectedNetwork + 1) + "/" + String(networkCount);
+      status = String(selectedNetwork + 1) + "/" + String(networkCount) + " APs";
+    } else {
+      status = "0 APs";
     }
   } else {
-    status = String(bleDeviceCount) + " BLE";
     if (bleDeviceCount > 0) {
-      status += " " + String(selectedBleDevice + 1) + "/" + String(bleDeviceCount);
+      status = String(selectedBleDevice + 1) + "/" + String(bleDeviceCount) + " BLE";
+    } else {
+      status = "0 BLE";
     }
   }
   tft.setTextColor(TFT_WHITE, TFT_NAVY);
-  const char *modeTitle = appMode == AppMode::Wifi ? "Wifi" : "Bluetooth";
+  const char *modeTitle = appMode == AppMode::Wifi ? "Wifi" : "BLE";
   tft.drawString(modeTitle, 8, 6);
 
   const bool activeScan = appMode == AppMode::Wifi ? scanning : bleScanning;
@@ -757,12 +1025,9 @@ void drawDetails()
     tft.drawString(network.bssid, 76, panelY + 24);
 
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    tft.drawString("SEC " + String(securityLabel(network.auth)) + "  hidden " + String(network.hidden ? "yes" : "no"), 8, panelY + 42);
+    tft.drawString("SEC " + String(securityDetailLabel(network.auth)) + "  hidden " + String(network.hidden ? "yes" : "no"), 8, panelY + 42);
     tft.drawString(String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  BSSIDs " + String(load), 8, panelY + 60);
     tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 78);
-    if (pmuReady) {
-      tft.drawRightString(String(batteryVoltage, 2) + "V", tft.width() - 8, panelY + 78);
-    }
     return;
   }
 
@@ -770,9 +1035,6 @@ void drawDetails()
   tft.drawString("RSSI " + String(network.rssi) + " dBm  " + String(signalPercent(network.rssi)) + "%", 8, panelY + 20);
   String details = String(bandLabel(network.channel)) + " ch " + String(network.channel) + "  " + securityLabel(network.auth) +
                    "  BSSIDs " + String(load);
-  if (pmuReady) {
-    details += "  " + String(batteryVoltage, 2) + "V";
-  }
   tft.drawString(details,
                  8,
                  panelY + 36);
@@ -973,9 +1235,9 @@ void drawBleDetails(int panelY)
 
   if (bleDetailMode == BleDetailMode::Address) {
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
-    tft.drawString("ADDR", 8, panelY + 24);
+    tft.drawString(String("ADDR ") + bleAddressTypeLabel(device.addressType), 8, panelY + 24);
     tft.setTextColor(TFT_CYAN, TFT_BLACK);
-    tft.drawString(device.address, 66, panelY + 24);
+    tft.drawString(device.address, 112, panelY + 24);
 
     tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
     tft.drawString(String("RSSI ") + String(device.rssi) + " dBm  " + String(signalPercent(device.rssi)) + "%", 8, panelY + 42);
@@ -983,9 +1245,31 @@ void drawBleDetails(int panelY)
                      (device.connectable ? "connectable" : "beacon"),
                    8,
                    panelY + 60);
-    tft.drawString(String("Scan mode ") + bleScanModeLabel(), 8, panelY + 78);
-    if (pmuReady) {
-      tft.drawRightString(String(batteryVoltage, 2) + "V", tft.width() - 8, panelY + 78);
+    tft.drawString(bleAdvertisementSummary(device), 8, panelY + 78);
+    return;
+  }
+
+  if (bleDetailMode == BleDetailMode::MfgData) {
+    tft.setTextColor(TFT_LIGHTGREY, TFT_BLACK);
+    String mfgTitle = "MFG " + bleManufacturerLabel(device);
+    if (device.manufacturerDataBytes > 0) {
+      mfgTitle += " " + String(device.manufacturerDataBytes) + "B";
+    }
+    tft.drawString(fitText(mfgTitle, 23), 8, panelY + 24);
+    if (device.serviceUuidCount > 0) {
+      tft.drawRightString("SVC " + compactBleUuid(device.serviceUuid), tft.width() - 8, panelY + 24);
+    }
+
+    if (device.manufacturerDataHex.length() == 0) {
+      tft.drawString("No manufacturer data", 8, panelY + 42);
+      return;
+    }
+
+    static constexpr int HEX_CHARS_PER_LINE = 32;
+    int y = panelY + 42;
+    for (int start = 0; start < device.manufacturerDataHex.length() && y < tft.height() - 2; start += HEX_CHARS_PER_LINE) {
+      tft.drawString(device.manufacturerDataHex.substring(start, start + HEX_CHARS_PER_LINE), 8, y);
+      y += 16;
     }
     return;
   }
@@ -1067,7 +1351,8 @@ void drawBleBody()
     return;
   }
 
-  const int visibleRows = min(bleDeviceCount, 3);
+  const int maxVisibleRows = bleDetailMode == BleDetailMode::Address || bleDetailMode == BleDetailMode::MfgData ? 2 : 3;
+  const int visibleRows = min(bleDeviceCount, maxVisibleRows);
   const int panelY = 36 + (max(1, visibleRows) * 20);
   tft.fillRect(0, 28, tft.width(), panelY - 28, TFT_BLACK);
 
@@ -1331,6 +1616,8 @@ void toggleDetailView(const char *reason)
     if (bleDetailMode == BleDetailMode::History) {
       bleDetailMode = BleDetailMode::Address;
     } else if (bleDetailMode == BleDetailMode::Address) {
+      bleDetailMode = BleDetailMode::MfgData;
+    } else if (bleDetailMode == BleDetailMode::MfgData) {
       bleDetailMode = BleDetailMode::List;
     } else {
       bleDetailMode = BleDetailMode::History;
@@ -1338,6 +1625,7 @@ void toggleDetailView(const char *reason)
 
     const char *modeLabel = bleDetailMode == BleDetailMode::History ? "RSSI history" :
                             bleDetailMode == BleDetailMode::Address ? "address" :
+                            bleDetailMode == BleDetailMode::MfgData ? "manufacturer data" :
                                                                       "device list";
     Serial.printf("BLE detail view via %s: %s\n", reason, modeLabel);
   }
