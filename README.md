@@ -23,7 +23,11 @@ The download includes a Bambu Studio 3MF profile, individual STLs, and a PDF
 bill of materials with wiring and assembly instructions.
 
 Printables:
+
 **[LilyGO T-Display C5 Case + LiPo →](https://www.printables.com/model/1824593-case-for-lilygo-t-display-c5-3000-mah-lipo)**
+The download includes individual STLs, and a PDF
+bill of materials with wiring and assembly instructions.
+
 
 
 
