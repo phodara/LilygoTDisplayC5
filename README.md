@@ -15,10 +15,13 @@ PocketProwler turns the LilyGO T-Display C5 (ESP32-C5) into a self-contained han
 ## 3D-Printed Case
 
 A purpose-built enclosure for PocketProwler — with an internal 3000mAh LiPo,
-hardware power switch, and printed button caps — is available on MakerWorld:
+hardware power switch, and printed button caps — is available on 
+MakerWorld:
 
 **[LilyGO T-Display C5 Case + LiPo →](https://makerworld.com/en/models/3219883-lilygo-t-display-c5-case-lipo)**
 
+Printables:
+https://www.printables.com/model/1824593-case-for-lilygo-t-display-c5-3000-mah-lipo
 The download includes a Bambu Studio 3MF profile, individual STLs, and a PDF
 bill of materials with wiring and assembly instructions.
 
