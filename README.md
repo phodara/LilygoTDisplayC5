@@ -27,6 +27,11 @@ Printables:
 <P>The download includes individual STLs, and a PDF
 bill of materials with wiring and assembly instructions.
 
+and Thingiverse:
+**[LilyGO T-Display C5 Case + LiPo →](https://www.thingiverse.com/thing:7401376)**
+<P>The download includes individual STLs, and a PDF
+bill of materials with wiring and assembly instructions.
+
 
 
 
