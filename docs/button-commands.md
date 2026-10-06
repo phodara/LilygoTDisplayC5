@@ -10,7 +10,7 @@ The LilyGO T-Display C5 has two top buttons used by the firmware:
 | Lower button | 0 | `lower GPIO0` | Cycle the current screen view |
 
 Buttons are active-low: a pressed button reads `LOW`. After boot, the firmware
-waits about 2 seconds before accepting button input so a held boot/programming
+accepts input once both buttons are released and stable so a held boot/programming
 button does not immediately trigger app navigation.
 
 ## Quick Reference
@@ -106,7 +106,7 @@ if there are no results yet or if the next scheduled WiFi scan is due.
 
 ## Timing Notes
 
-- Button debounce is about 220 ms.
+- Each button must be stable for about 25 ms to register a press or release.
 - A both-button hold is detected after about 700 ms.
 - Both-button tap is detected when both buttons were pressed together and then
   released before the hold threshold.

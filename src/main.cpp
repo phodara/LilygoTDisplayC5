@@ -72,6 +72,9 @@ struct ButtonState {
   uint8_t pin = 0;
   const char *label = "";
   bool wasPressed = false;
+  bool rawPressed = false;
+  bool stablePressed = false;
+  uint32_t changedAtMs = 0;
 };
 
 struct BleDeviceInfo {
@@ -120,12 +123,13 @@ static constexpr uint8_t MAX_NETWORKS = 24;
 static constexpr uint8_t MAX_BLE_DEVICES = 32;
 static constexpr uint8_t HISTORY_SAMPLES = 40;
 static constexpr uint32_t SCAN_INTERVAL_MS = 10000;
+static constexpr uint32_t WIFI_SCAN_CHANNEL_MS = 200;
 static constexpr uint32_t BLE_SCAN_INTERVAL_MS = 5000;
 static constexpr uint32_t BLE_SCAN_DURATION_MS = 3000;
 static constexpr uint32_t BLE_STALE_MS = 60000;
 static constexpr uint32_t BLE_HISTORY_INTERVAL_MS = 700;
-static constexpr uint32_t BOOT_SCREEN_MS = 3000;
-static constexpr uint32_t BUTTON_DEBOUNCE_MS = 220;
+static constexpr uint32_t BOOT_SCREEN_MS = 1000;
+static constexpr uint32_t BUTTON_DEBOUNCE_MS = 25;
 static constexpr uint32_t MODE_HOLD_MS = 700;
 static constexpr uint32_t BATTERY_INTERVAL_MS = 5000;
 static constexpr uint32_t BATTERY_STORE_INTERVAL_MS = 300000;
@@ -139,7 +143,7 @@ static constexpr int HEADER_WIFI_SCAN_X = 48;
 static constexpr int HEADER_WIFI_BATTERY_X = 98;
 static constexpr int HEADER_BLE_SCAN_MODE_X = 160;
 static constexpr const char *APP_NAME = "PocketProwler";
-static constexpr const char *APP_VERSION = "2.2.0";
+static constexpr const char *APP_VERSION = "2.2.1";
 static constexpr const char *APP_COPYRIGHT = "Copyright (c) 2026 Paul Hodara";
 static constexpr BleCompanyName BLE_COMPANY_NAMES[] = {
   {0x0000, "Ericsson"},
@@ -270,7 +274,6 @@ static bool pmuReady = false;
 static uint32_t lastScanMs = 0;
 static uint32_t lastBleScanMs = 0;
 static uint32_t lastBleHistoryMs = 0;
-static uint32_t lastButtonMs = 0;
 static uint32_t bothButtonsPressedAtMs = 0;
 static uint32_t buttonsArmAtMs = 0;
 static uint32_t lastBatteryMs = 0;
@@ -1503,7 +1506,7 @@ void startWifiScan()
   scanning = true;
   Serial.println("Starting WiFi scan...");
   WiFi.scanDelete();
-  const int result = WiFi.scanNetworks(true, true);
+  const int result = WiFi.scanNetworks(true, true, false, WIFI_SCAN_CHANNEL_MS);
   if (appMode == AppMode::Wifi) {
     drawCurrentHeader();
   }
@@ -1663,14 +1666,22 @@ void switchMode()
 
 bool buttonPressed(ButtonState &button)
 {
-  return digitalRead(button.pin) == LOW;
+  const uint32_t now = millis();
+  const bool pressed = digitalRead(button.pin) == LOW;
+  if (pressed != button.rawPressed) {
+    button.rawPressed = pressed;
+    button.changedAtMs = now;
+  }
+  if (now - button.changedAtMs >= BUTTON_DEBOUNCE_MS) {
+    button.stablePressed = pressed;
+  }
+  return button.stablePressed;
 }
 
 void handleSingleButton(ButtonState &button)
 {
   const bool pressed = buttonPressed(button);
   if (pressed && !button.wasPressed) {
-    lastButtonMs = millis();
     Serial.printf("%s press detected, raw=%d\n",
                   button.label,
                   digitalRead(button.pin));
@@ -1690,8 +1701,11 @@ void handleSingleButton(ButtonState &button)
 
 void handleButtons()
 {
+  const bool upperPressed = buttonPressed(upperButton);
+  const bool lowerPressed = buttonPressed(lowerButton);
   if (!buttonsArmed) {
-    if (millis() < buttonsArmAtMs) {
+    if (!timeReached(buttonsArmAtMs) || upperButton.rawPressed || lowerButton.rawPressed ||
+        upperPressed || lowerPressed) {
       return;
     }
 
@@ -1707,12 +1721,6 @@ void handleButtons()
   }
 
   const uint32_t now = millis();
-  if (now - lastButtonMs < BUTTON_DEBOUNCE_MS) {
-    return;
-  }
-
-  const bool upperPressed = buttonPressed(upperButton);
-  const bool lowerPressed = buttonPressed(lowerButton);
   if (upperPressed && lowerPressed) {
     if (bothButtonsPressedAtMs == 0) {
       bothButtonsPressedAtMs = now;
@@ -1723,7 +1731,6 @@ void handleButtons()
       bothButtonsWasPressed = true;
       upperButton.wasPressed = true;
       lowerButton.wasPressed = true;
-      lastButtonMs = now;
     }
     return;
   }
@@ -1736,11 +1743,17 @@ void handleButtons()
     bothButtonsWasPressed = false;
     upperButton.wasPressed = upperPressed;
     lowerButton.wasPressed = lowerPressed;
-    lastButtonMs = now;
     return;
   }
 
   bothButtonsPressedAtMs = 0;
+  if (bothButtonsWasPressed) {
+    upperButton.wasPressed = upperPressed;
+    lowerButton.wasPressed = lowerPressed;
+    if (upperPressed || lowerPressed) {
+      return;
+    }
+  }
   bothButtonsWasPressed = false;
   handleSingleButton(upperButton);
   handleSingleButton(lowerButton);
@@ -1767,13 +1780,7 @@ void initButtons()
                 digitalRead(lowerButton.pin));
 
   buttonsArmed = false;
-  buttonsArmAtMs = millis() + 2000;
-}
-
-void refreshButtons()
-{
-  configureButtonPin(upperButton.pin);
-  configureButtonPin(lowerButton.pin);
+  buttonsArmAtMs = millis() + 100;
 }
 
 void initBattery()
@@ -1802,6 +1809,8 @@ void setup()
   digitalWrite(LCD_BLK_POWER, HIGH);
 
   Serial.begin(115200);
+  // Debug output must never hold up navigation when the USB host stops reading.
+  Serial.setTxTimeoutMs(0);
   delay(300);
   Serial.println();
   Serial.println("LilyGO T-Display C5 WiFi analyzer booting...");
@@ -1830,7 +1839,6 @@ void setup()
 
 void loop()
 {
-  refreshButtons();
   handleButtons();
   updateBattery();
 
@@ -1848,4 +1856,5 @@ void loop()
   if (appMode == AppMode::Bluetooth && !bleScanning && millis() - lastBleScanMs >= BLE_SCAN_INTERVAL_MS) {
     startBleScan();
   }
+  delay(5);
 }
